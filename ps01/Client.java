@@ -6,12 +6,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class Client implements Runnable {
 
+	private int id;
     private int iterations;
     private Server server;
     
     private BlockingQueue<Message> token;
     
-    public Client(Server server, int iterations) {
+    public Client(int id, Server server, int iterations) {
+    	this.id = id;
         this.server = server;
         this.iterations = iterations;
         this.token = new LinkedBlockingQueue<Message>();
@@ -23,27 +25,27 @@ public class Client implements Runnable {
                 Random randomGenerator = new Random();
                 
                 // Thinking: wait for some random time.
-                System.out.println("Client thinking.");
-                Thread.sleep(randomGenerator.nextInt(10) * 1000);
+                System.out.println(String.format("Client %d thinking.", this.id));
+                Thread.sleep(randomGenerator.nextInt(10) * 100);
                 
                 // Hungry
+                System.out.println(String.format("Client %d hungry.", this.id));
                 Message m = new Message();
                 m.type = Message.MessageType.REQUEST;
                 m.client = this;
                 this.server.message(m);
-                System.out.println("Client hungry.");
                 
                 // When a message appears in the input queue.
                 Message resp = this.token.take();
-                System.out.println("Client has token.");
+                System.out.println(String.format("Client %d has token.", this.id));
                 
                 // Eating: wait for some random time.
-                System.out.println("Client eating.");
-                Thread.sleep(randomGenerator.nextInt(10) * 1000);
+                System.out.println(String.format("Client %d eating.", this.id));
+                Thread.sleep(randomGenerator.nextInt(5) * 100);
                 
                 // Append token to server's queue.
+                System.out.println(String.format("Client %d giving token back.", this.id));
                 this.server.message(resp);
-                System.out.println("Client gave token back.");
                 
             } catch (InterruptedException e) {
                 
@@ -66,5 +68,9 @@ public class Client implements Runnable {
                 this.token.add(message);
                 break;
         }
+    }
+    
+    public int getId() {
+    	return this.id;
     }
 }

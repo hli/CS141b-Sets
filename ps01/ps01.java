@@ -1,5 +1,8 @@
 package ps01;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class ps01 {
 	
 	public static void main(String[] args) {
@@ -36,10 +39,33 @@ public class ps01 {
         }
         
 		Server server = new Server(numClients);
-		(new Thread(server)).start();
+		Thread serverThread = new Thread(server);
+		
+		serverThread.start();
+		Queue<Thread> clientThreads = new LinkedList<Thread>();
 		
 		for (int i = 0; i < numClients; i++) {
-			(new Thread(new Client(server, clientIterations))).start();
+			Thread c = new Thread(new Client(i, server, clientIterations));
+			clientThreads.add(c);
+			c.start();
+		}
+		
+		while (!clientThreads.isEmpty())
+		{
+			Thread t = clientThreads.remove();
+			try {
+				t.join(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		try {
+			serverThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

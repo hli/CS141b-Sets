@@ -35,7 +35,7 @@ public class Server implements Runnable {
                 switch (m.type) {
 	                case REQUEST:
 	                	
-	                	System.out.println("Server processing request.");
+	                	System.out.println(String.format("Server processing request from %d.", m.client.getId()));
 	                    
 	                	Message resp = this.token.take();
 	                    m.client.message(resp);
@@ -55,8 +55,8 @@ public class Server implements Runnable {
                 e.printStackTrace();
                 
             }
-            
         }
+        System.out.println("Server shut down.");
     }
     
     public void message(Message message) {
