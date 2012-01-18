@@ -23,6 +23,7 @@ public class Client implements Runnable {
                 Random randomGenerator = new Random();
                 
                 // Thinking: wait for some random time.
+                System.out.println("Client thinking.");
                 Thread.sleep(randomGenerator.nextInt(10) * 1000);
                 
                 // Hungry
@@ -30,15 +31,19 @@ public class Client implements Runnable {
                 m.type = Message.MessageType.REQUEST;
                 m.client = this;
                 this.server.message(m);
+                System.out.println("Client hungry.");
                 
                 // When a message appears in the input queue.
                 Message resp = this.token.take();
+                System.out.println("Client has token.");
                 
                 // Eating: wait for some random time.
+                System.out.println("Client eating.");
                 Thread.sleep(randomGenerator.nextInt(10) * 1000);
                 
                 // Append token to server's queue.
                 this.server.message(resp);
+                System.out.println("Client gave token back.");
                 
             } catch (InterruptedException e) {
                 
