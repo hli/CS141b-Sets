@@ -1,6 +1,5 @@
 package ps01;
 
-import java.sql.Time;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -72,6 +71,9 @@ public class Client implements Runnable {
         Message term = new Message();
         term.type = Message.MessageType.TERMINATE;
         this.server.message(term);
+        this.server.addtothinktime(this.getthinktime()/this.iterations);
+        this.server.addtohungrytime(this.gethungrytime()/this.iterations);
+        this.server.addtomealtime(this.getmealtime()/this.iterations);
     }
     
     public void message(Message message) {

@@ -6,6 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class Server implements Runnable {
 
     private int clients;
+    private int numclients;
     private long thinktime;
     private long hungrytime;
     private long mealtime;
@@ -15,6 +16,7 @@ public class Server implements Runnable {
     
     public Server(int clients) {
         this.clients = clients;
+        this.numclients = clients;
         this.queue = new LinkedBlockingQueue<Message>();
         this.token = new LinkedBlockingQueue<Message>();
         this.thinktime = 0;
@@ -52,9 +54,6 @@ public class Server implements Runnable {
 	                	System.out.println("Server processing terminate.");
 	                    
 	                    this.clients -= 1;
-	                    this.addtothinktime(m.client.getthinktime());
-	                    this.addtohungrytime(m.client.gethungrytime());
-	                    this.addtomealtime(m.client.getmealtime());
 	                    break;
                 }
                 
@@ -65,9 +64,9 @@ public class Server implements Runnable {
                 
             }
         }
-        System.out.println(String.format("Average time thinking: %d", this.getthinktime()/this.clients));
-        System.out.println(String.format("Average time hungry: %d", this.gethungrytime()/this.clients));
-        System.out.println(String.format("Average time eating: %d", this.getmealtime()/this.clients));
+        System.out.println(String.format("Average time thinking: %d", this.getthinktime()/this.numclients));
+        System.out.println(String.format("Average time hungry: %d", this.gethungrytime()/this.numclients));
+        System.out.println(String.format("Average time eating: %d", this.getmealtime()/this.numclients));
         System.out.println("Server shut down.");
     }
     
