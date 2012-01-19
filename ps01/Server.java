@@ -6,6 +6,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class Server implements Runnable {
 
     private int clients;
+    private long thinktime;
+    private long hungrytime;
+    private long mealtime;
     
     private BlockingQueue<Message> queue;
     private BlockingQueue<Message> token;
@@ -14,6 +17,9 @@ public class Server implements Runnable {
         this.clients = clients;
         this.queue = new LinkedBlockingQueue<Message>();
         this.token = new LinkedBlockingQueue<Message>();
+        this.thinktime = 0;
+        this.hungrytime = 0;
+        this.mealtime = 0;
         
         // Construct token for server.
         Message t = new Message();
@@ -46,6 +52,9 @@ public class Server implements Runnable {
 	                	System.out.println("Server processing terminate.");
 	                    
 	                    this.clients -= 1;
+	                    this.addtothinktime(m.client.getthinktime());
+	                    this.addtohungrytime(m.client.gethungrytime());
+	                    this.addtomealtime(m.client.getmealtime());
 	                    break;
                 }
                 
@@ -56,6 +65,9 @@ public class Server implements Runnable {
                 
             }
         }
+        System.out.println(String.format("Average time thinking: %d", this.getthinktime()/this.clients));
+        System.out.println(String.format("Average time hungry: %d", this.gethungrytime()/this.clients));
+        System.out.println(String.format("Average time eating: %d", this.getmealtime()/this.clients));
         System.out.println("Server shut down.");
     }
     
@@ -73,5 +85,23 @@ public class Server implements Runnable {
                 this.token.add(message);
                 break;
         }
+    }
+    public void addtothinktime(long time) {
+    	this.thinktime += time;
+    }
+    public void addtohungrytime(long time) {
+    	this.hungrytime += time;
+    }
+    public void addtomealtime(long time) {
+    	this.mealtime += time;
+    }
+    public long getthinktime() {
+    	return this.thinktime;
+    }
+    public long gethungrytime() {
+    	return this.hungrytime;
+    }
+    public long getmealtime() {
+    	return this.mealtime;
     }
 }

@@ -1,5 +1,6 @@
 package ps01;
 
+import java.sql.Time;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -8,6 +9,9 @@ public class Client implements Runnable {
 
 	private int id;
     private int iterations;
+    private long thinktime;
+    private long hungrytime;
+    private long mealtime;
     private Server server;
     
     private BlockingQueue<Message> token;
@@ -16,6 +20,9 @@ public class Client implements Runnable {
     	this.id = id;
         this.server = server;
         this.iterations = iterations;
+        this.thinktime = 0;
+        this.hungrytime = 0;
+        this.mealtime = 0;
         this.token = new LinkedBlockingQueue<Message>();
     }
     
@@ -26,9 +33,11 @@ public class Client implements Runnable {
                 
                 // Thinking: wait for some random time.
                 System.out.println(String.format("Client %d thinking.", this.id));
+                long beforethink = System.currentTimeMillis();
                 Thread.sleep(randomGenerator.nextInt(10) * 100);
-                
+                this.addtothinktime(System.currentTimeMillis() - beforethink);
                 // Hungry
+                long beforehungry = System.currentTimeMillis();
                 System.out.println(String.format("Client %d hungry.", this.id));
                 Message m = new Message();
                 m.type = Message.MessageType.REQUEST;
@@ -37,12 +46,16 @@ public class Client implements Runnable {
                 
                 // When a message appears in the input queue.
                 Message resp = this.token.take();
+                this.addtohungrytime(System.currentTimeMillis() - beforehungry);
                 System.out.println(String.format("Client %d has token.", this.id));
                 
                 // Eating: wait for some random time.
                 System.out.println(String.format("Client %d eating.", this.id));
+                long beforemeal = System.currentTimeMillis();
                 Thread.sleep(randomGenerator.nextInt(5) * 100);
-                
+                this.addtomealtime(System.currentTimeMillis() - beforemeal);
+
+
                 // Append token to server's queue.
                 System.out.println(String.format("Client %d giving token back.", this.id));
                 this.server.message(resp);
@@ -73,4 +86,23 @@ public class Client implements Runnable {
     public int getId() {
     	return this.id;
     }
+    public void addtothinktime(long time) {
+    	this.thinktime += time;
+    }
+    public void addtohungrytime(long time) {
+    	this.hungrytime += time;
+    }
+    public void addtomealtime(long time) {
+    	this.mealtime += time;
+    }
+    public long getthinktime() {
+    	return this.thinktime;
+    }
+    public long gethungrytime() {
+    	return this.hungrytime;
+    }
+    public long getmealtime() {
+    	return this.mealtime;
+    }
+    
 }
