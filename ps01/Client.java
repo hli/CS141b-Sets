@@ -32,7 +32,7 @@ public class Client implements Runnable {
                 // Thinking: wait for some random time.
                 long beforethink = System.currentTimeMillis();
                 System.out.println(String.format("Client %d thinking.", this.id));
-                Thread.sleep(randomGenerator.nextInt(10) + 395);
+                Thread.sleep(randomGenerator.nextInt(10) + 195);
                 this.addtothinktime(System.currentTimeMillis() - beforethink);
                 
                 // Hungry
