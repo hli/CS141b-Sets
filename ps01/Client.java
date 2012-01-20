@@ -26,15 +26,15 @@ public class Client implements Runnable {
     }
     
     public void run() {
+    	Random randomGenerator = new Random();
         for (int i = 0; i < this.iterations; i++) {
             try {
-                Random randomGenerator = new Random();
-                
                 // Thinking: wait for some random time.
-                System.out.println(String.format("Client %d thinking.", this.id));
                 long beforethink = System.currentTimeMillis();
-                Thread.sleep(randomGenerator.nextInt(10) * 100);
+                System.out.println(String.format("Client %d thinking.", this.id));
+                Thread.sleep(randomGenerator.nextInt(10) + 395);
                 this.addtothinktime(System.currentTimeMillis() - beforethink);
+                
                 // Hungry
                 long beforehungry = System.currentTimeMillis();
                 System.out.println(String.format("Client %d hungry.", this.id));
@@ -45,19 +45,19 @@ public class Client implements Runnable {
                 
                 // When a message appears in the input queue.
                 Message resp = this.token.take();
-                this.addtohungrytime(System.currentTimeMillis() - beforehungry);
                 System.out.println(String.format("Client %d has token.", this.id));
+                this.addtohungrytime(System.currentTimeMillis() - beforehungry);
                 
                 // Eating: wait for some random time.
-                System.out.println(String.format("Client %d eating.", this.id));
                 long beforemeal = System.currentTimeMillis();
-                Thread.sleep(randomGenerator.nextInt(5) * 100);
-                this.addtomealtime(System.currentTimeMillis() - beforemeal);
-
+                System.out.println(String.format("Client %d eating.", this.id));
+                Thread.sleep(randomGenerator.nextInt(10) + 15);
 
                 // Append token to server's queue.
                 System.out.println(String.format("Client %d giving token back.", this.id));
                 this.server.message(resp);
+                this.addtomealtime(System.currentTimeMillis() - beforemeal);
+
                 
             } catch (InterruptedException e) {
                 

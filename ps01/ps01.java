@@ -8,7 +8,7 @@ import java.util.Queue;
 public class ps01 {
 	
 	public static void main(String[] args) {
-		int numClients = 10;
+		int numClients = 30;
 		int clientIterations = 50;
 		
 		// Check that command-line arguments are valid.
