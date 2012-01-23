@@ -1,5 +1,3 @@
-package ps01;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 

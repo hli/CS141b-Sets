@@ -1,5 +1,3 @@
-package ps01;
-
 public class Message {
 	public enum MessageType {
 	    REQUEST, TERMINATE, TOKEN

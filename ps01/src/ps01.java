@@ -1,7 +1,3 @@
-// Hello world.
-
-package ps01;
-
 import java.util.LinkedList;
 import java.util.Queue;
 
