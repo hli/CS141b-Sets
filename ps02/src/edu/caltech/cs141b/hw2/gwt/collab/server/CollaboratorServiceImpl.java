@@ -23,29 +23,50 @@ public class CollaboratorServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public List<DocumentMetadata> getDocumentList() {
+		/*
+		 * TODO: Call the CollaboratorServer.getDocuments() method and
+		 * transform List<DocumentHeader> to List<DocumentMetadata>
+		 */
 		return null;
 	}
 
 	@Override
 	public LockedDocument lockDocument(String documentKey)
 			throws LockUnavailable {
+		/*
+		 * TODO: Call the CollaboratorServer.checkoutDocument() method and
+		 * transform Document to LockedDocument.
+		 */
 		return null;
 	}
 
 	@Override
 	public UnlockedDocument getDocument(String documentKey) {
+		/*
+		 * TODO: Call the CollaboratorServer.getDocument() method and
+		 * transform Document to UnlockedDocument.
+		 */
 		return null;
 	}
 
 	@Override
 	public UnlockedDocument saveDocument(LockedDocument doc)
 			throws LockExpired {
+		/*
+		 * TODO: Transform LockedDocument to Document, call the
+		 * CollaboratorServer.commitDocument() method, call the
+		 * CollaboratorServer.checkinDocument() method. Transform resulting
+		 * Document to UnlockedDocument.
+		 */
 		return null;
 	}
 	
 	@Override
 	public void releaseLock(LockedDocument doc) throws LockExpired {
+		/*
+		 * TODO: Transform LockedDocument to Document, call the 
+		 * CollaboratorServer.checkinDocument() method.
+		 */
 	}
 
 }
-
