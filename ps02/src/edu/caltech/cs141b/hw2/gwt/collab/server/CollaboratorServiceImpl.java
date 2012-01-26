@@ -20,64 +20,63 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  */
 @SuppressWarnings("serial")
 public class CollaboratorServiceImpl extends RemoteServiceServlet implements
-		CollaboratorService {
-	
-	private static final Logger log = Logger.getLogger(CollaboratorServiceImpl.class.toString());
-	private static CollaboratorServer server = new CollaboratorServer();
-	
-	@Override
-	public List<DocumentMetadata> getDocumentList() {
-		
-		List<DocumentMetadata> metadata = new ArrayList<DocumentMetadata>();
-		List<DocumentHeader> headers = server.getDocuments();
-		
-		if (!headers.isEmpty()) {
-			for (DocumentHeader dh : headers)
-			{
-				metadata.add(new DocumentMetadata(dh.getKey(), dh.getTitle()));
-			}
-		}
-		
-		return metadata;
-	}
+        CollaboratorService {
 
-	@Override
-	public LockedDocument lockDocument(String documentKey)
-			throws LockUnavailable {
-		/*
-		 * TODO: Call the CollaboratorServer.checkoutDocument() method and
-		 * transform Document to LockedDocument.
-		 */
-		return null;
-	}
+    private static final Logger log = Logger
+            .getLogger(CollaboratorServiceImpl.class.toString());
+    private static CollaboratorServer server = new CollaboratorServer();
 
-	@Override
-	public UnlockedDocument getDocument(String documentKey) {
-		/*
-		 * TODO: Call the CollaboratorServer.getDocument() method and
-		 * transform Document to UnlockedDocument.
-		 */
-		return null;
-	}
+    @Override
+    public List<DocumentMetadata> getDocumentList() {
 
-	@Override
-	public UnlockedDocument saveDocument(LockedDocument doc)
-			throws LockExpired {
-		/*
-		 * TODO: Transform LockedDocument to Document, call the
-		 * CollaboratorServer.commitDocument() method, call the
-		 * CollaboratorServer.checkinDocument() method. Transform resulting
-		 * Document to UnlockedDocument.
-		 */
-		return null;
-	}
-	
-	@Override
-	public void releaseLock(LockedDocument doc) throws LockExpired {
-		/*
-		 * TODO: Transform LockedDocument to Document, call the 
-		 * CollaboratorServer.checkinDocument() method.
-		 */
-	}
+        List<DocumentMetadata> metadata = new ArrayList<DocumentMetadata>();
+        List<DocumentHeader> headers = server.getDocuments();
+
+        if (!headers.isEmpty()) {
+            for (DocumentHeader dh : headers) {
+                metadata.add(new DocumentMetadata(dh.getKey(), dh.getTitle()));
+            }
+        }
+
+        return metadata;
+    }
+
+    @Override
+    public LockedDocument lockDocument(String documentKey)
+            throws LockUnavailable {
+        /*
+         * TODO: Call the CollaboratorServer.checkoutDocument() method and
+         * transform Document to LockedDocument.
+         */
+        return null;
+    }
+
+    @Override
+    public UnlockedDocument getDocument(String documentKey) {
+        /*
+         * TODO: Call the CollaboratorServer.getDocument() method and transform
+         * Document to UnlockedDocument.
+         */
+        return null;
+    }
+
+    @Override
+    public UnlockedDocument saveDocument(LockedDocument doc) throws LockExpired {
+        /*
+         * TODO: Transform LockedDocument to Document, call the
+         * CollaboratorServer.commitDocument() method, call the
+         * CollaboratorServer.checkinDocument() method. Transform resulting
+         * Document to UnlockedDocument.
+         */
+        return null;
+    }
+
+    @Override
+    public void releaseLock(LockedDocument doc) throws LockExpired {
+        /*
+         * TODO: Transform LockedDocument to Document, call the
+         * CollaboratorServer.checkinDocument() method.
+         */
+    }
 
 }

@@ -12,14 +12,14 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
-public class DocumentData{
+public class DocumentData {
 
-	@PrimaryKey
+    @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+    @Extension(vendorName = "datanucleus", key = "gae.encoded-pk", value = "true")
     private String key;
-	
-	@Persistent
+
+    @Persistent
     private String title;
 
     @Persistent
@@ -27,82 +27,80 @@ public class DocumentData{
 
     @Persistent
     private Date lockedUntil;
-    
+
     @Persistent(mappedBy = "document")
-    @Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", 
-    	value="updatedTime desc"))
+    @Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "updatedTime desc"))
     private List<DocumentRevisionData> revisions = new ArrayList<DocumentRevisionData>();
-    
+
     @Persistent(mappedBy = "document")
-    @Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", 
-    	value="commentTime desc"))
+    @Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "commentTime desc"))
     private List<CommentData> comments = new ArrayList<CommentData>();
-    
-    public DocumentData(String title, String contents, String updatedBy, String lockedBy,
-    		Date lockedUntil) {
-    	this.title = title;
-    	this.revisions.add(new DocumentRevisionData(contents, updatedBy));
-    	this.lockedBy = lockedBy;
-    	this.lockedUntil = lockedUntil;
+
+    public DocumentData(String title, String contents, String updatedBy,
+            String lockedBy, Date lockedUntil) {
+        this.title = title;
+        this.revisions.add(new DocumentRevisionData(contents, updatedBy));
+        this.lockedBy = lockedBy;
+        this.lockedUntil = lockedUntil;
     }
-    
+
     public String getKey() {
-    	return this.key;
+        return this.key;
     }
-    
+
     public String getTitle() {
-    	return this.title;
+        return this.title;
     }
-    
+
     public String getLockedBy() {
-    	return this.lockedBy;
+        return this.lockedBy;
     }
-    
+
     public Date getLockedUntil() {
-    	return this.lockedUntil;
+        return this.lockedUntil;
     }
-    
+
     public String getContents() {
-    	return this.revisions.get(0).getContents();
+        return this.revisions.get(0).getContents();
     }
-    
+
     public List<DocumentRevisionData> getRevisions() {
-    	return this.revisions;
+        return this.revisions;
     }
-    
+
     public List<DocumentRevisionData> getRevisions(int $limit) {
-    	return this.revisions.subList(0, 
-    			Math.min($limit - 1, this.revisions.size()));
+        return this.revisions.subList(0,
+                Math.min($limit - 1, this.revisions.size()));
     }
-    
+
     public List<CommentData> getComments() {
-    	return this.comments;
+        return this.comments;
     }
-    
+
     public List<CommentData> getComments(int $limit) {
-    	return this.comments.subList(0,
-    			Math.min($limit - 1, this.comments.size()));
+        return this.comments.subList(0,
+                Math.min($limit - 1, this.comments.size()));
     }
-    
+
     public void setTitle(String title) {
-    	this.title = title;
+        this.title = title;
     }
-    
+
     public void setContents(String contents, String updatedBy) {
-    	this.revisions.add(new DocumentRevisionData(contents, updatedBy));
+        this.revisions.add(new DocumentRevisionData(contents, updatedBy));
     }
-    
+
     public void addComment(String message, String commentBy) {
-    	this.comments.add(new CommentData(message, commentBy));
+        this.comments.add(new CommentData(message, commentBy));
     }
-    
+
     public void lock(String lockedBy, Date lockedUntil) {
-    	this.lockedBy = lockedBy;
-    	this.lockedUntil = lockedUntil;
+        this.lockedBy = lockedBy;
+        this.lockedUntil = lockedUntil;
     }
-    
+
     public void unlock() {
-    	this.lockedBy = null;
-    	this.lockedUntil = null;
+        this.lockedBy = null;
+        this.lockedUntil = null;
     }
 }

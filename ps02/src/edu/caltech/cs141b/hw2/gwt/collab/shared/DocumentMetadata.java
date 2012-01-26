@@ -9,27 +9,26 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * creation or modification dates, they need only be added to this class.
  */
 public class DocumentMetadata implements IsSerializable {
-	
-	private String key = null;
-	private String title = null;
-	
-	// Required by GWT serialization.
-	public DocumentMetadata() {
-		
-	}
-	
-	public DocumentMetadata(String key, String title) {
-		this.key = key;
-		this.title = title;
-	}
 
-	public String getKey() {
-		return key;
-	}
+    private String key = null;
+    private String title = null;
 
-	public String getTitle() {
-		return title;
-	}
-	
+    // Required by GWT serialization.
+    public DocumentMetadata() {
+
+    }
+
+    public DocumentMetadata(String key, String title) {
+        this.key = key;
+        this.title = title;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
 }
-

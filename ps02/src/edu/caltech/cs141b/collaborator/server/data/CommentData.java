@@ -10,46 +10,46 @@ import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
 public class CommentData {
-	@PrimaryKey
+    @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+    @Extension(vendorName = "datanucleus", key = "gae.encoded-pk", value = "true")
     private String key;
-	
-	@Persistent
+
+    @Persistent
     private DocumentData document;
-	
-	@Persistent
-	private Date commentTime;
-	
-	@Persistent
-	private String commentBy;
-	
-	@Persistent
+
+    @Persistent
+    private Date commentTime;
+
+    @Persistent
+    private String commentBy;
+
+    @Persistent
     private String message;
-    
+
     public CommentData(String message, String commentBy) {
-    	this.message = message;
-    	this.commentBy = commentBy;
-    	this.commentTime = new Date();
+        this.message = message;
+        this.commentBy = commentBy;
+        this.commentTime = new Date();
     }
-    
+
     public String getKey() {
-    	return this.key;
+        return this.key;
     }
-    
+
     public Date getCommentTime() {
-    	return this.commentTime;
+        return this.commentTime;
     }
-    
+
     public String getCommentBy() {
-    	return this.commentBy;
+        return this.commentBy;
     }
-    
+
     public String getMessage() {
-    	return this.message;
+        return this.message;
     }
-    
+
     public DocumentData getDocument() {
-    	return this.document;
+        return this.document;
     }
 }

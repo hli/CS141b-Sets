@@ -10,56 +10,55 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public class LockedDocument implements IsSerializable {
 
-	private String lockedBy = null;
-	private Date lockedUntil = null;
-	private String key = null;
-	private String title = null;
-	private String contents = null;
-	
-	// Required by GWT serialization.
-	public LockedDocument() {
-		
-	}
-	
-	public LockedDocument(String lockedBy, Date lockedUntil, String key,
-			String title, String contents) {
-		this.lockedBy = lockedBy;
-		this.lockedUntil = lockedUntil;
-		this.key = key;
-		this.title = title;
-		this.contents = contents;
-	}
+    private String lockedBy = null;
+    private Date lockedUntil = null;
+    private String key = null;
+    private String title = null;
+    private String contents = null;
 
-	public String getKey() {
-		return key;
-	}
+    // Required by GWT serialization.
+    public LockedDocument() {
 
-	public String getTitle() {
-		return title;
-	}
-	
-	public void setTitle(String documentTitle) {
-		this.title = documentTitle;
-	}
+    }
 
-	public String getContents() {
-		return contents;
-	}
+    public LockedDocument(String lockedBy, Date lockedUntil, String key,
+            String title, String contents) {
+        this.lockedBy = lockedBy;
+        this.lockedUntil = lockedUntil;
+        this.key = key;
+        this.title = title;
+        this.contents = contents;
+    }
 
-	public void setContents(String documentContents) {
-		this.contents = documentContents;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public String getLockedBy() {
-		return lockedBy;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public Date getLockedUntil() {
-		return lockedUntil;
-	}
-	
-	public UnlockedDocument unlock() {
-		return new UnlockedDocument(key, title, contents);
-	}
+    public void setTitle(String documentTitle) {
+        this.title = documentTitle;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
+    public void setContents(String documentContents) {
+        this.contents = documentContents;
+    }
+
+    public String getLockedBy() {
+        return lockedBy;
+    }
+
+    public Date getLockedUntil() {
+        return lockedUntil;
+    }
+
+    public UnlockedDocument unlock() {
+        return new UnlockedDocument(key, title, contents);
+    }
 }
-

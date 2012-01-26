@@ -10,46 +10,46 @@ import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
 public class DocumentRevisionData {
-	@PrimaryKey
+    @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+    @Extension(vendorName = "datanucleus", key = "gae.encoded-pk", value = "true")
     private String key;
-	
-	@Persistent
+
+    @Persistent
     private DocumentData document;
-	
-	@Persistent
-	private Date updatedTime;
-	
-	@Persistent
-	private String updatedBy;
-	
-	@Persistent
+
+    @Persistent
+    private Date updatedTime;
+
+    @Persistent
+    private String updatedBy;
+
+    @Persistent
     private String contents;
-    
+
     public DocumentRevisionData(String contents, String updatedBy) {
-    	this.contents = contents;
-    	this.updatedBy = updatedBy;
-    	this.updatedTime = new Date();
+        this.contents = contents;
+        this.updatedBy = updatedBy;
+        this.updatedTime = new Date();
     }
-    
+
     public String getKey() {
-    	return this.key;
+        return this.key;
     }
-    
+
     public Date getUpdatedTime() {
-    	return this.updatedTime;
+        return this.updatedTime;
     }
-    
+
     public String getUpdatedBy() {
-    	return this.updatedBy;
+        return this.updatedBy;
     }
-    
+
     public String getContents() {
-    	return this.contents;
+        return this.contents;
     }
-    
+
     public DocumentData getDocument() {
-    	return this.document;
+        return this.document;
     }
 }
