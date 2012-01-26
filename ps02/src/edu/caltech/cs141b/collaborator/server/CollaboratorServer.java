@@ -47,12 +47,12 @@ public class CollaboratorServer {
 		DocumentData result = pm.getObjectById(DocumentData.class, 
 				KeyFactory.stringToKey(key));
 		
-		if (result != null)
+		if (result.getKey() != null)
 		{
 			doc = new Document(result.getKey(), result.getTitle(), 
 					result.getContents(), true);
 		}
-				
+		
 		return doc;
 	}
 	
@@ -63,6 +63,7 @@ public class CollaboratorServer {
 		 * Throw LockUnavailable exception if the document is already
 		 * locked in the datastore.
 		 */
+		return null;
 	}
 	
 	public Document commitDocument(Document doc) throws LockExpired {
@@ -71,6 +72,7 @@ public class CollaboratorServer {
 		 * still has a lock on the document before committing. Throw
 		 * LockExpired exception if the client lock had already expired.
 		 */
+		return null;
 	}
 	
 	public void checkinDocument(Document doc) throws LockExpired {

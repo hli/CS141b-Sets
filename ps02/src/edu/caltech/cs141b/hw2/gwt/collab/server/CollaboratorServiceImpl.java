@@ -1,8 +1,11 @@
 package edu.caltech.cs141b.hw2.gwt.collab.server;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import edu.caltech.cs141b.collaborator.common.DocumentHeader;
+import edu.caltech.cs141b.collaborator.server.CollaboratorServer;
 import edu.caltech.cs141b.hw2.gwt.collab.client.CollaboratorService;
 import edu.caltech.cs141b.hw2.gwt.collab.shared.DocumentMetadata;
 import edu.caltech.cs141b.hw2.gwt.collab.shared.LockExpired;
@@ -20,14 +23,22 @@ public class CollaboratorServiceImpl extends RemoteServiceServlet implements
 		CollaboratorService {
 	
 	private static final Logger log = Logger.getLogger(CollaboratorServiceImpl.class.toString());
-
+	private static CollaboratorServer server = new CollaboratorServer();
+	
 	@Override
 	public List<DocumentMetadata> getDocumentList() {
-		/*
-		 * TODO: Call the CollaboratorServer.getDocuments() method and
-		 * transform List<DocumentHeader> to List<DocumentMetadata>
-		 */
-		return null;
+		
+		List<DocumentMetadata> metadata = new ArrayList<DocumentMetadata>();
+		List<DocumentHeader> headers = server.getDocuments();
+		
+		if (!headers.isEmpty()) {
+			for (DocumentHeader dh : headers)
+			{
+				metadata.add(new DocumentMetadata(dh.getKey(), dh.getTitle()));
+			}
+		}
+		
+		return metadata;
 	}
 
 	@Override
