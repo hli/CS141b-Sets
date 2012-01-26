@@ -3,6 +3,7 @@ package edu.caltech.cs141b.collaborator.server;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -16,12 +17,27 @@ import edu.caltech.cs141b.collaborator.common.DocumentHeader;
 import edu.caltech.cs141b.collaborator.common.PMF;
 import edu.caltech.cs141b.collaborator.server.data.DocumentData;
 import edu.caltech.cs141b.collaborator.server.data.DocumentRevisionData;
+import edu.caltech.cs141b.hw2.gwt.collab.server.CollaboratorServiceImpl;
 import edu.caltech.cs141b.hw2.gwt.collab.shared.LockExpired;
 import edu.caltech.cs141b.hw2.gwt.collab.shared.LockUnavailable;
 
 public class CollaboratorServer {
 
+    private static final Logger log = Logger
+            .getLogger(CollaboratorServiceImpl.class.toString());
+    
     private static final long DELTA = 60 * 60 * 1000;
+    
+    private CollaboratorServiceImpl servlet;
+    
+    private String getUserId() {
+        //return "Henry";
+        return this.servlet.getUserId();
+    }
+    
+    public CollaboratorServer(CollaboratorServiceImpl servlet) {
+        this.servlet = servlet;
+    }
     
     public List<DocumentHeader> getDocuments() {
 
@@ -85,7 +101,7 @@ public class CollaboratorServer {
                         result.getLockedUntil().before(currentTime)) {
                     doc = new Document(result.getKey(), result.getTitle(),
                             result.getContents(), true);
-                    result.lock(currentUser, 
+                    result.lock(this.getUserId(), 
                             new Date(currentTime.getTime() + DELTA));
                     pm.makePersistent(result);
                     
@@ -121,24 +137,30 @@ public class CollaboratorServer {
             tx.begin();
             
             try {
-                result = pm.getObjectById(DocumentData.class,
-                        KeyFactory.stringToKey(doc.getKey()));
-                
-                if (result.getLockedUntil().after(currentTime) &&
-                        result.getLockedBy() == currentUser) {
+                if (doc.getKey() == null) {
                     
-                    result.setContents(doc.getContents(), currentUser);
+                    result = this.newDocument(doc);
+                    
                 } else {
-                    throw new LockExpired();
-                }
                     
+                    result = pm.getObjectById(DocumentData.class,
+                            KeyFactory.stringToKey(doc.getKey()));
+                    if (result.getLockedUntil().after(currentTime) &&
+                            result.getLockedBy().equals(this.getUserId())) {
+                        
+                        result.setContents(doc.getContents(), this.getUserId());
+                        
+                    } else {
+                        log.info("by: " + result.getLockedBy() + " uid: " + this.getUserId());
+                        log.info(result.getLockedUntil().toString() + " " + currentTime.toString());
+                        log.info((new Boolean(result.getLockedBy().equals(this.getUserId()))).toString() + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                        log.info((new Boolean(result.getLockedUntil().after(currentTime))).toString() + "DOHSAODHOSAHDSHADHSAODHOHSAHDSD");
+                        throw new LockExpired();
+                    }
+                    
+                }
             } catch (JDOObjectNotFoundException e) {
-                result = new DocumentData(doc.getTitle(), 
-                        doc.getContents(), currentUser, currentUser, 
-                        new Date(currentTime.getTime() + DELTA));
-                
-                doc = new Document(result.getKey(), result.getTitle(),
-                        result.getContents(), true);
+                result = this.newDocument(doc);
             }
 
             pm.makePersistent(result);
@@ -151,7 +173,8 @@ public class CollaboratorServer {
             }
         }
 
-        return doc;
+        return new Document(result.getKey(), result.getTitle(), 
+                result.getContents(), true);
     }
 
     public void checkinDocument(Document doc) throws LockExpired {
@@ -171,7 +194,7 @@ public class CollaboratorServer {
                         KeyFactory.stringToKey(doc.getKey()));
                 
                 if (result.getLockedUntil().after(currentTime) &&
-                        result.getLockedBy() == currentUser) {
+                        result.getLockedBy().equals(this.getUserId())) {
                     
                     result.unlock();
                     pm.makePersistent(result);
@@ -189,5 +212,13 @@ public class CollaboratorServer {
             }
         }
     }
-
+    
+    private DocumentData newDocument(Document doc) {
+        
+        Date currentTime = new Date();
+        
+        return new DocumentData(doc.getTitle(), 
+                doc.getContents(), this.getUserId(), this.getUserId(), 
+                new Date(currentTime.getTime() + DELTA));
+    }
 }

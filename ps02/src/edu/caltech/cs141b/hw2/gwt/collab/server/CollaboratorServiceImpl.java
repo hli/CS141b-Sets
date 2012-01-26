@@ -31,8 +31,13 @@ public class CollaboratorServiceImpl extends RemoteServiceServlet implements
 
     private static final Logger log = Logger
             .getLogger(CollaboratorServiceImpl.class.toString());
-    private static CollaboratorServer server = new CollaboratorServer();
+    private static CollaboratorServer server;
 
+    public CollaboratorServiceImpl() {
+        super();
+        this.server = new CollaboratorServer(this);
+    }
+    
     @Override
     public List<DocumentMetadata> getDocumentList() {
 
@@ -85,7 +90,7 @@ public class CollaboratorServiceImpl extends RemoteServiceServlet implements
          */
         Document plainDoc = new Document(doc.getKey(), doc.getTitle(), 
                 doc.getContents(), true);
-        server.commitDocument(plainDoc);
+        plainDoc = server.commitDocument(plainDoc);
         server.checkinDocument(plainDoc);
         
         return new UnlockedDocument(plainDoc.getKey(), plainDoc.getTitle(), 
@@ -103,4 +108,7 @@ public class CollaboratorServiceImpl extends RemoteServiceServlet implements
         server.checkinDocument(plainDoc);
     }
 
+    public String getUserId() {
+        return this.getThreadLocalRequest().getRemoteAddr();
+    }
 }
