@@ -87,11 +87,11 @@ public class DocumentData {
     }
 
     public void setContents(String contents, String updatedBy) {
-        this.revisions.add(new DocumentRevisionData(contents, updatedBy));
+        this.revisions.add(0, new DocumentRevisionData(contents, updatedBy));
     }
 
     public void addComment(String message, String commentBy) {
-        this.comments.add(new CommentData(message, commentBy));
+        this.comments.add(0, new CommentData(message, commentBy));
     }
 
     public void lock(String lockedBy, Date lockedUntil) {

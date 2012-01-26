@@ -148,13 +148,10 @@ public class CollaboratorServer {
                     if (result.getLockedUntil().after(currentTime) &&
                             result.getLockedBy().equals(this.getUserId())) {
                         
+                        result.setTitle(doc.getTitle());
                         result.setContents(doc.getContents(), this.getUserId());
                         
                     } else {
-                        log.info("by: " + result.getLockedBy() + " uid: " + this.getUserId());
-                        log.info(result.getLockedUntil().toString() + " " + currentTime.toString());
-                        log.info((new Boolean(result.getLockedBy().equals(this.getUserId()))).toString() + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-                        log.info((new Boolean(result.getLockedUntil().after(currentTime))).toString() + "DOHSAODHOSAHDSHADHSAODHOHSAHDSD");
                         throw new LockExpired();
                     }
                     
