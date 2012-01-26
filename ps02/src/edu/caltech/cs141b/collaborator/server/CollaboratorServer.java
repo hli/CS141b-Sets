@@ -21,6 +21,8 @@ import edu.caltech.cs141b.hw2.gwt.collab.shared.LockUnavailable;
 
 public class CollaboratorServer {
 
+    private static final long DELTA = 60 * 60 * 1000;
+    
     public List<DocumentHeader> getDocuments() {
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -83,12 +85,14 @@ public class CollaboratorServer {
                         result.getLockedUntil().before(currentTime)) {
                     doc = new Document(result.getKey(), result.getTitle(),
                             result.getContents(), true);
-                    result.lock(currentUser, currentTime + delta);
+                    result.lock(currentUser, 
+                            new Date(currentTime.getTime() + DELTA));
                     pm.makePersistent(result);
                     
                     tx.commit();
                 } else {
-                    throw new LockUnavailable("Available at : " + (currentTime + delta).toString());
+                    throw new LockUnavailable("Available at : " +  
+                         (new Date(currentTime.getTime() + DELTA)).toString());
                 }      
             } catch (JDOObjectNotFoundException e) {
             }
@@ -131,7 +135,7 @@ public class CollaboratorServer {
             } catch (JDOObjectNotFoundException e) {
                 result = new DocumentData(doc.getTitle(), 
                         doc.getContents(), currentUser, currentUser, 
-                        currentTime + delta);
+                        new Date(currentTime.getTime() + DELTA));
                 
                 doc = new Document(result.getKey(), result.getTitle(),
                         result.getContents(), true);
