@@ -48,12 +48,13 @@ public class CollaboratorServer {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Document doc = null;
 
-        DocumentData result = pm.getObjectById(DocumentData.class,
-                KeyFactory.stringToKey(key));
-
-        if (result != null) {
+        try {
+            DocumentData result = pm.getObjectById(DocumentData.class,
+                    KeyFactory.stringToKey(key));
+            
             doc = new Document(result.getKey(), result.getTitle(),
                     result.getContents(), false);
+        } catch (JDOObjectNotFoundException e) {
         }
 
         return doc;
