@@ -30,15 +30,34 @@ public class CollaboratorServer {
     
     private CollaboratorServiceImpl servlet;
     
+    /**
+     * Get User ID.
+     * 
+     * Gets a unique identifier for the current user.
+     * 
+     * @return
+     *   Current user identifier.
+     */
     private String getUserId() {
-        //return "Henry";
         return this.servlet.getUserId();
     }
     
+    /**
+     * Class Constructor.
+     * 
+     * @param servlet
+     *   Servlet that uses this server.
+     */
     public CollaboratorServer(CollaboratorServiceImpl servlet) {
         this.servlet = servlet;
     }
     
+    /**
+     * Get list of document headers.
+     * 
+     * Retrieves the key and title for all the documents.
+     * @return list of document headers
+     */
     public List<DocumentHeader> getDocuments() {
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -61,6 +80,14 @@ public class CollaboratorServer {
         return headers;
     }
 
+    /**
+     * Gets document given key.
+     * 
+     * Retrieves the contents of a document specified by the given key.
+     * @param key
+     *    document key
+     * @return document
+     */
     public Document getDocument(String key) {
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -77,14 +104,19 @@ public class CollaboratorServer {
 
         return doc;
     }
-
+  
+    /**
+     * Gets document and lock.
+     * 
+     * Gives the client exclusive access to a document with the given key if the document
+     * is available.
+     * @param key
+     *    document key
+     * @return document
+     * @throws LockUnavailable
+     *    if another client has the lock
+     */
     public Document checkoutDocument(String key) throws LockUnavailable {
-        /*
-         * TODO: Use JDO to checkout the Document specified by key. Check out
-         * means retrieve the document with locked = false. Throw
-         * LockUnavailable exception if the document is already locked in the
-         * datastore.
-         */
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         Document doc = null;
@@ -122,12 +154,17 @@ public class CollaboratorServer {
         return doc;
     }
 
+    /**
+     * Stores document changes.
+     * 
+     * Stores the documents changes if the client still has the lock.
+     * @param doc
+     *    document
+     * @return document
+     * @throws LockExpired
+     *    if the client no longer has access to the document.
+     */
     public Document commitDocument(Document doc) throws LockExpired {
-        /*
-         * TODO: Use JDO to save the passed Document. Verify that the client
-         * still has a lock on the document before committing. Throw LockExpired
-         * exception if the client lock had already expired.
-         */
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         DocumentData result = null;
@@ -174,11 +211,16 @@ public class CollaboratorServer {
                 result.getContents(), true);
     }
 
+    /**
+     * Gives up access to document.
+     * 
+     * Client returns the given document's lock to the server.
+     * @param doc
+     *    document
+     * @throws LockExpired
+     *    if the client no longer has access to the document.
+     */
     public void checkinDocument(Document doc) throws LockExpired {
-        /*
-         * TODO: Release the client lock. Throw LockExpired exception if the
-         * client lock had already expired.
-         */
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         Date currentTime = new Date();
@@ -210,6 +252,15 @@ public class CollaboratorServer {
         }
     }
     
+    /**
+     * Creates new document.
+     * 
+     * Initializes a new document with the title and contents of the given
+     * document, the user's identifier, and the current time for the lock.
+     * @param doc
+     *    new document
+     * @return document
+     */
     private DocumentData newDocument(Document doc) {
         
         Date currentTime = new Date();
