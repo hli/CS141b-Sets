@@ -8,6 +8,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Text;
+
 @PersistenceCapable
 public class CommentData {
     @PrimaryKey
@@ -25,10 +27,10 @@ public class CommentData {
     private String commentBy;
 
     @Persistent
-    private String message;
+    private Text message;
 
     public CommentData(String message, String commentBy) {
-        this.message = message;
+        this.message = new Text(message);
         this.commentBy = commentBy;
         this.commentTime = new Date();
     }
@@ -46,7 +48,7 @@ public class CommentData {
     }
 
     public String getMessage() {
-        return this.message;
+        return this.message.getValue();
     }
 
     public DocumentData getDocument() {

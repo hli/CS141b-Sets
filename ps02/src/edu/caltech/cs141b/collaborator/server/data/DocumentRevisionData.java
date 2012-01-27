@@ -8,6 +8,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Text;
+
 @PersistenceCapable
 public class DocumentRevisionData {
     @PrimaryKey
@@ -25,10 +27,10 @@ public class DocumentRevisionData {
     private String updatedBy;
 
     @Persistent
-    private String contents;
+    private Text contents;
 
     public DocumentRevisionData(String contents, String updatedBy) {
-        this.contents = contents;
+        this.contents = new Text(contents);
         this.updatedBy = updatedBy;
         this.updatedTime = new Date();
     }
@@ -46,7 +48,7 @@ public class DocumentRevisionData {
     }
 
     public String getContents() {
-        return this.contents;
+        return this.contents.getValue();
     }
 
     public DocumentData getDocument() {
