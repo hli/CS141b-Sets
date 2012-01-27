@@ -130,7 +130,8 @@ public class CollaboratorServer {
                         KeyFactory.stringToKey(key));
     
                 if (result.getLockedUntil() == null ||
-                        result.getLockedUntil().before(currentTime)) {
+                        result.getLockedUntil().before(currentTime) ||
+                        result.getLockedBy().equals(this.getUserId())) {
                     doc = new Document(result.getKey(), result.getTitle(),
                             result.getContents(), true);
                     result.lock(this.getUserId(), 
