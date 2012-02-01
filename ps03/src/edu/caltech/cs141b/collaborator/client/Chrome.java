@@ -114,38 +114,28 @@ public class Chrome extends Composite {
         }
     }
     
-    public void updateDocumentList(List<DocumentHeader> headers) {
-        
+    /**
+     * Get Document List
+     * 
+     * Returns a handle to the active document list.
+     * 
+     * @return
+     *   Document list.
+     */
+    public DocumentList getDocumentList() {
+        return this.documentList;
     }
     
     /**
-     * Document Library Button
-     * 
-     * @return
-     *   The toolbar button that, when clicked, shows the document library.
+     * Document Library Toolbar Button.
      */
-    public ToolbarButton btnDocumentLibrary() {
-        return new ToolbarButton(new Image(Resources.INSTANCE.documents()),
-                "Document Library", new ClickHandler() {
+    public ToolbarButton btnDocumentLibrary = 
+        new ToolbarButton(new Image(Resources.INSTANCE.documents()),
+            "Document Library", new ClickHandler() {
             public void onClick(ClickEvent event) {
+            
                 Chrome.this.documentList.show();
+            
             }
         });
-    }
-    
-    public ToolbarButton btnNewDocument() {
-        return new ToolbarButton(new Image(Resources.INSTANCE.newDocument()),
-                "New Document", new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                String name = Window.prompt("Enter the new document title:", "Untitled");
-                if (name != null && name.equals("")) {
-                    new Notification("Please enter a valid document title.").show();
-                } else if (name != null) {
-                    /* TODO: Have backend create a new document. Get the document. */
-                    Chrome.this.add(new Document(name, name, "", true));
-                }
-                Chrome.this.documentList.show();
-            }
-        });
-    }
 }

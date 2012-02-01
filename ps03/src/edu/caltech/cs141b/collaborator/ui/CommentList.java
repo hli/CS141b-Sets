@@ -48,7 +48,7 @@ public class CommentList extends Composite implements KeyPressHandler {
         }
     }
     
-    private static class CommentCell extends AbstractCell<Comment> {
+    private class CommentCell extends AbstractCell<Comment> {
 
       @Override
       public void render(Context context, Comment comment, SafeHtmlBuilder sb) {

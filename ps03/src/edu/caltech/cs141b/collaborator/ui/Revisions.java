@@ -24,7 +24,6 @@ public class Revisions extends PopupPanel {
     private List<DocumentRevision> revisions;
     private int cursor = 0;
     
-    private Toolbar toolbar;
     private Label revisionTitle;
     private Label revisionBy;
     private Label revisionTime;
@@ -38,10 +37,10 @@ public class Revisions extends PopupPanel {
         DockLayoutPanel panel = new DockLayoutPanel(Unit.PX);
         
         // Setup toolbar.
-        this.toolbar = new Toolbar();
-        this.toolbar.add(this.btnPrevRev());
-        this.toolbar.add(this.btnNextRev());
-        panel.addNorth(this.toolbar, 50);
+        Toolbar toolbar = new Toolbar();
+        toolbar.add(this.btnPrevRev);
+        toolbar.add(this.btnNextRev);
+        panel.addNorth(toolbar, 50);
         
         // Setup the revision information area.
         FlowPanel revInfo = new FlowPanel();
@@ -98,8 +97,8 @@ public class Revisions extends PopupPanel {
         this.revisionText.setText(revision.getContents());
     }
     
-    private ToolbarButton btnNextRev() {
-        return new ToolbarButton(new Image(Resources.INSTANCE.nextRev()),
+    private ToolbarButton btnNextRev =
+        new ToolbarButton(new Image(Resources.INSTANCE.nextRev()),
                 "Next Revision", new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (Revisions.this.cursor == 0) {
@@ -111,10 +110,9 @@ public class Revisions extends PopupPanel {
                 
             }
         });
-    }
     
-    private ToolbarButton btnPrevRev() {
-        return new ToolbarButton(new Image(Resources.INSTANCE.prevRev()),
+    private ToolbarButton btnPrevRev =
+        new ToolbarButton(new Image(Resources.INSTANCE.prevRev()),
                 "Previous Revision", new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (Revisions.this.cursor == Revisions.this.revisions.size() - 1) {
@@ -125,5 +123,4 @@ public class Revisions extends PopupPanel {
                 }
             }
         });
-    }
 }

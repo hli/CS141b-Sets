@@ -85,21 +85,11 @@ public class Editor extends Composite {
         
         // Setup the buttons for the toolbar of an unlocked document:
         Toolbar toolbar = new Toolbar();
-        
-        // Document Library button.
-        toolbar.add(Main.chrome.btnDocumentLibrary());
-        
-        // Refresh Document button.
-        toolbar.add(this.btnRefresh());
-        
-        // Checkout Document button.
-        toolbar.add(this.btnCheckout());
-        
-        // Comments button.
-        toolbar.add(this.btnComments());
-        
-        // Revisions button.
-        toolbar.add(this.btnRevisions());
+        toolbar.add(Main.chrome.btnDocumentLibrary);
+        toolbar.add(this.btnRefresh);
+        toolbar.add(this.btnCheckout);
+        toolbar.add(this.btnComments);
+        toolbar.add(this.btnRevisions);
         
         return toolbar;
     }
@@ -107,77 +97,58 @@ public class Editor extends Composite {
     private Toolbar getLockedToolbar() {
 
         Toolbar toolbar = new Toolbar();
-        
-        // Document Library button.
-        toolbar.add(Main.chrome.btnDocumentLibrary());
-        
-        // Commit Document button.
-        toolbar.add(this.btnCommit());
-        
-        // Checkin Document button.
-        toolbar.add(this.btnCheckin());
-        
-        // Comments button.
-        toolbar.add(this.btnComments());
-        
-        // Revisions button.
-        toolbar.add(this.btnRevisions());
+        toolbar.add(Main.chrome.btnDocumentLibrary);
+        toolbar.add(this.btnCommit);
+        toolbar.add(this.btnCheckin);
+        toolbar.add(this.btnComments);
+        toolbar.add(this.btnRevisions);
         
         return toolbar;
     }
     
-    private ToolbarButton btnRefresh() {
-        return new ToolbarButton(new Image(Resources.INSTANCE.refresh()),
-                "Refresh Document",
-                new ClickHandler() {
+    private ToolbarButton btnRefresh = 
+        new ToolbarButton(new Image(Resources.INSTANCE.refresh()), 
+                "Refresh Document", new ClickHandler() { 
             public void onClick(ClickEvent event) {
                 
-                Window.alert("Refresh");
+                new Notification("Refresh").show();
                 
             }
         });
-    }
     
-    private ToolbarButton btnCheckout() {
-        return new ToolbarButton(new Image(Resources.INSTANCE.checkout()),
-                "Lock Document",
-                new ClickHandler() {
+    private ToolbarButton btnCheckout = 
+        new ToolbarButton(new Image(Resources.INSTANCE.checkout()),
+                "Lock Document", new ClickHandler() {
             public void onClick(ClickEvent event) {
                 
-                Window.alert("Checkout");
+                new Notification("Checkout").show();
                 
             }
         });
-    }
     
-    private ToolbarButton btnCommit() {
-        return new ToolbarButton(new Image(Resources.INSTANCE.commit()),
-                "Save Document",
-                new ClickHandler() {
+    private ToolbarButton btnCommit = 
+        new ToolbarButton(new Image(Resources.INSTANCE.commit()),
+                "Save Document", new ClickHandler() {
             public void onClick(ClickEvent event) {
                 
-                Window.alert("Commit");
+                new Notification("Commit").show();
                 
             }
         });
-    }
     
-    private ToolbarButton btnCheckin() {
-        return new ToolbarButton(new Image(Resources.INSTANCE.checkin()),
-                "Unlock Document",
-                new ClickHandler() {
+    private ToolbarButton btnCheckin = 
+        new ToolbarButton(new Image(Resources.INSTANCE.checkin()),
+                "Unlock Document", new ClickHandler() {
             public void onClick(ClickEvent event) {
                 
-                Window.alert("Checkin");
+                new Notification("Checkin").show();
                 
             }
         });
-    }
     
-    private ToolbarButton btnComments() {
-        return new ToolbarButton(new Image(Resources.INSTANCE.comments()),
-                "Comments",
-                new ClickHandler() {
+    private ToolbarButton btnComments =
+        new ToolbarButton(new Image(Resources.INSTANCE.comments()),
+                "Comments", new ClickHandler() {
             public void onClick(ClickEvent event) {
                 
                 if (comments.isVisible()) {
@@ -190,17 +161,14 @@ public class Editor extends Composite {
             }
             
         });
-    }
     
-    private ToolbarButton btnRevisions() {
-        return new ToolbarButton(new Image(Resources.INSTANCE.revisions()),
-                "Revisions",
-                new ClickHandler() {
+    private ToolbarButton btnRevisions =
+        new ToolbarButton(new Image(Resources.INSTANCE.revisions()),
+                "Revisions", new ClickHandler() {
             public void onClick(ClickEvent event) {
                 
                 Editor.this.revisions.show();
                 
             }
         });
-    }
 }

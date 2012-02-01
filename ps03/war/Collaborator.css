@@ -40,6 +40,16 @@ html {
 	box-shadow: 0 0 15px #aaa;
 }
 
+.documentList .headerList {
+	height: 350px;
+	overflow: scroll;
+}
+
+.documentList .title {
+	padding: 10px;
+	border-bottom: 1px solid #ddd;
+}
+
 .tabPanel {
 	height: 50px;
 }
