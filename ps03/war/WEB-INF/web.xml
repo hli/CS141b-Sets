@@ -5,6 +5,15 @@
          version="2.5"
          xmlns="http://java.sun.com/xml/ns/javaee">
 
+  <security-constraint>
+    <web-resource-collection>
+        <url-pattern>Collaborator.html</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+        <role-name>*</role-name>
+    </auth-constraint>
+  </security-constraint>
+
   <!-- Servlets -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>

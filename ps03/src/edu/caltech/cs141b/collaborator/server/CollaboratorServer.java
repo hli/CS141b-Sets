@@ -44,7 +44,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
      *   Current user identifier.
      */
     private String getUserId() {
-        return this.getThreadLocalRequest().getRemoteAddr();
+        return this.getThreadLocalRequest().getUserPrincipal().getName();
     }
     
     /**
