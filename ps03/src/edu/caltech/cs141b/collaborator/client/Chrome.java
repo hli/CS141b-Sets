@@ -1,6 +1,7 @@
 package edu.caltech.cs141b.collaborator.client;
 
 import java.util.HashMap;
+import java.util.List;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -12,6 +13,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 import edu.caltech.cs141b.collaborator.common.Document;
+import edu.caltech.cs141b.collaborator.common.DocumentHeader;
 import edu.caltech.cs141b.collaborator.ui.DocumentList;
 import edu.caltech.cs141b.collaborator.ui.DocumentTab;
 import edu.caltech.cs141b.collaborator.ui.Editor;
@@ -110,6 +112,10 @@ public class Chrome extends Composite {
         } else {
             return false;
         }
+    }
+    
+    public void updateDocumentList(List<DocumentHeader> headers) {
+        
     }
     
     /**
