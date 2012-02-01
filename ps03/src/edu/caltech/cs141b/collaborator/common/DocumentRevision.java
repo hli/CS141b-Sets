@@ -16,7 +16,7 @@ public class DocumentRevision extends Document implements IsSerializable {
 
     public DocumentRevision(String key, String title, String contents,
             Date updatedTime, String updatedBy) {
-        super(key, title, contents, true);
+        super(key, title, contents, false);
         this.updatedTime = updatedTime;
         this.updatedBy = updatedBy;
     }

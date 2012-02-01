@@ -43,7 +43,7 @@ public class DocLister implements AsyncCallback<List<DocumentMetadata>> {
             collaborator.documentList.clear();
 
             for (DocumentMetadata meta : result) {
-                collaborator.documentList.addItem(meta.getTitle(),
+                collaborator.addItem(meta.getTitle(),
                         meta.getKey());
             }
         }

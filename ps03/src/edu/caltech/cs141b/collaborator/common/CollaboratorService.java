@@ -64,6 +64,17 @@ public interface CollaboratorService extends RemoteService {
     void checkinDocument(Document doc) throws LockExpired;
     
     /**
+     * Creates new document.
+     * 
+     * Initializes a new document with the title and contents of the given
+     * document, the user's identifier, and the current time for the lock.
+     * @param doc
+     *    new document
+     * @return document
+     */
+    Document newDocument(Document doc);
+    
+    /**
      * Get comments for document.
      * 
      * @param key

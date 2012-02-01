@@ -16,6 +16,8 @@ public interface CollaboratorServiceAsync {
     void checkoutDocument(String key, AsyncCallback<Document> callback);
 
     void commitDocument(Document doc, AsyncCallback<Document> callback);
+    
+    void newDocument(Document doc, AsyncCallback<Document> callback);
 
     void checkinDocument(Document doc, AsyncCallback<Void> callback);
 

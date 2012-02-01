@@ -18,7 +18,7 @@ public class Main implements EntryPoint {
     /**
      * Create a remote service proxy to talk to the server-side service.
      */
-    private static final CollaboratorServiceAsync service = GWT
+    public static final CollaboratorServiceAsync service = GWT
             .create(CollaboratorService.class);
     
     public void onModuleLoad() {
