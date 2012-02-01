@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='Collaborator'>
+	<!-- Inherit the core Web Toolkit stuff.                        -->
+	<inherits name='com.google.gwt.user.User' />
+
+	<!-- Inherit the default GWT style sheet.  You can change       -->
+	<!-- the theme of your GWT application by uncommenting          -->
+	<!-- any one of the following lines.                            -->
+	<!-- <inherits name='com.google.gwt.user.theme.clean.Clean' />  -->
+	<!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
+	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
+	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
+
+	<!-- Other module inherits                                      -->
+    <inherits name="com.google.gwt.resources.Resources" />
+    
+	<!-- Specify the app entry point class.                         -->
+    <entry-point
+        class="edu.caltech.cs141b.collaborator.client.Main">
+    </entry-point>
+    
+    <!-- Specify the application specific style sheet.              -->
+    <stylesheet src='/Collaborator.css' />
+    
+	<!-- Specify the paths for translatable code                    -->
+	<source path='client' />
+	<source path='ui' />
+	<source path='common' />
+
+</module>

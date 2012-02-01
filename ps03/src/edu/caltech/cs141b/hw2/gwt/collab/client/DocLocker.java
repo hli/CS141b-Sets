@@ -3,7 +3,7 @@ package edu.caltech.cs141b.hw2.gwt.collab.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import edu.caltech.cs141b.hw2.gwt.collab.shared.LockUnavailable;
+import edu.caltech.cs141b.collaborator.common.LockUnavailable;
 import edu.caltech.cs141b.hw2.gwt.collab.shared.LockedDocument;
 
 /**

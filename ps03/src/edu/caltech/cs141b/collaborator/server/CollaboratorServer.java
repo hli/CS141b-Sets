@@ -11,24 +11,26 @@ import javax.jdo.Query;
 import javax.jdo.Transaction;
 
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+import edu.caltech.cs141b.collaborator.common.CollaboratorService;
 import edu.caltech.cs141b.collaborator.common.Document;
 import edu.caltech.cs141b.collaborator.common.DocumentHeader;
+import edu.caltech.cs141b.collaborator.common.LockExpired;
+import edu.caltech.cs141b.collaborator.common.LockUnavailable;
 import edu.caltech.cs141b.collaborator.common.PMF;
 import edu.caltech.cs141b.collaborator.server.data.DocumentData;
 import edu.caltech.cs141b.collaborator.server.data.DocumentRevisionData;
-import edu.caltech.cs141b.hw2.gwt.collab.server.CollaboratorServiceImpl;
-import edu.caltech.cs141b.hw2.gwt.collab.shared.LockExpired;
-import edu.caltech.cs141b.hw2.gwt.collab.shared.LockUnavailable;
 
-public class CollaboratorServer {
+
+@SuppressWarnings("serial")
+public class CollaboratorServer extends RemoteServiceServlet implements
+    CollaboratorService {
 
     private static final Logger log = Logger
-            .getLogger(CollaboratorServiceImpl.class.toString());
+            .getLogger(CollaboratorServer.class.toString());
     
     private static final long DELTA = 60 * 60 * 1000;
-    
-    private CollaboratorServiceImpl servlet;
     
     /**
      * Get User ID.
@@ -39,17 +41,7 @@ public class CollaboratorServer {
      *   Current user identifier.
      */
     private String getUserId() {
-        return this.servlet.getUserId();
-    }
-    
-    /**
-     * Class Constructor.
-     * 
-     * @param servlet
-     *   Servlet that uses this server.
-     */
-    public CollaboratorServer(CollaboratorServiceImpl servlet) {
-        this.servlet = servlet;
+        return this.getThreadLocalRequest().getRemoteAddr();
     }
     
     /**

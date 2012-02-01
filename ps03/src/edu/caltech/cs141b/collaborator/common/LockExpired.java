@@ -1,4 +1,4 @@
-package edu.caltech.cs141b.hw2.gwt.collab.shared;
+package edu.caltech.cs141b.collaborator.common;
 
 /**
  * Thrown when the provided lock objects cannot be used any longer.

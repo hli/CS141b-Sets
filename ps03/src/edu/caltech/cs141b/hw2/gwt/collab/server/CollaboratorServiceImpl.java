@@ -9,13 +9,13 @@ import javax.jdo.PersistenceManager;
 
 import edu.caltech.cs141b.collaborator.common.Document;
 import edu.caltech.cs141b.collaborator.common.DocumentHeader;
+import edu.caltech.cs141b.collaborator.common.LockExpired;
+import edu.caltech.cs141b.collaborator.common.LockUnavailable;
 import edu.caltech.cs141b.collaborator.common.PMF;
 import edu.caltech.cs141b.collaborator.server.CollaboratorServer;
 import edu.caltech.cs141b.collaborator.server.data.DocumentData;
 import edu.caltech.cs141b.hw2.gwt.collab.client.CollaboratorService;
 import edu.caltech.cs141b.hw2.gwt.collab.shared.DocumentMetadata;
-import edu.caltech.cs141b.hw2.gwt.collab.shared.LockExpired;
-import edu.caltech.cs141b.hw2.gwt.collab.shared.LockUnavailable;
 import edu.caltech.cs141b.hw2.gwt.collab.shared.LockedDocument;
 import edu.caltech.cs141b.hw2.gwt.collab.shared.UnlockedDocument;
 
