@@ -67,19 +67,14 @@ public class DocumentData {
     public List<DocumentRevisionData> getRevisions() {
         return this.revisions;
     }
-
-    public List<DocumentRevisionData> getRevisions(int $limit) {
-        return this.revisions.subList(0,
-                Math.min($limit - 1, this.revisions.size()));
-    }
-
+    
     public List<CommentData> getComments() {
         return this.comments;
     }
 
     public List<CommentData> getComments(int start, int end) {
         return this.comments.subList(start,
-                Math.min(end, this.comments.size()));
+                Math.min(end, this.comments.size() - 1));
     }
 
     public void setTitle(String title) {

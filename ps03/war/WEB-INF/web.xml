@@ -5,7 +5,7 @@
          version="2.5"
          xmlns="http://java.sun.com/xml/ns/javaee">
 
-  <!-- Servlets 
+  <!-- Servlets -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
     <servlet-class>edu.caltech.cs141b.collaborator.server.CollaboratorServer</servlet-class>
@@ -13,9 +13,9 @@
   
   <servlet-mapping>
     <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/collab/collab</url-pattern>
+    <url-pattern>/Collaborator/collab</url-pattern>
   </servlet-mapping>
-  -->
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>Collaborator.html</welcome-file>

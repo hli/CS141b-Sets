@@ -40,8 +40,8 @@ public class DocLister implements AsyncCallback<List<DocumentHeader>> {
             new Notification("Document list updated.").show();
             GWT.log("Got " + result.size() + " documents.");
             this.chrome.getDocumentList().refresh(result);
-            }
         }
     }
+}
 
 

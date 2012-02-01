@@ -39,7 +39,7 @@ public class DocCommitter implements AsyncCallback<Document> {
     	new Notification("Document saved.").show();
     	GWT.log("Document " + result + " saved.");
         this.editor.refresh(result);
-            
-        }
+        
     }
+}
 

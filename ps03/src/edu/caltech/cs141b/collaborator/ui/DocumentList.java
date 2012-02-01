@@ -22,6 +22,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
+import edu.caltech.cs141b.collaborator.client.DocAdder;
 import edu.caltech.cs141b.collaborator.client.Main;
 import edu.caltech.cs141b.collaborator.common.Document;
 import edu.caltech.cs141b.collaborator.common.DocumentHeader;
@@ -88,41 +89,6 @@ public class DocumentList extends PopupPanel {
 
         panel.add(this.headerList);
 
-        /* TEMP stuff. */
-        List<DocumentHeader> test = new ArrayList<DocumentHeader>();
-        test.add(new DocumentHeader("key", "Title 1"));
-        test.add(new DocumentHeader("key", "Title 2"));
-        test.add(new DocumentHeader("key", "Title 3"));
-        test.add(new DocumentHeader("key", "Title 4"));
-        test.add(new DocumentHeader("key", "Title 5"));
-        test.add(new DocumentHeader("key", "Title 6"));
-        test.add(new DocumentHeader("key", "Title 7"));
-        test.add(new DocumentHeader("key", "Title 8"));
-        test.add(new DocumentHeader("key", "Title 9"));
-        test.add(new DocumentHeader("key", "Title 10"));
-        test.add(new DocumentHeader("key", "Title 1"));
-        test.add(new DocumentHeader("key", "Title 2"));
-        test.add(new DocumentHeader("key", "Title 3"));
-        test.add(new DocumentHeader("key", "Title 4"));
-        test.add(new DocumentHeader("key", "Title 5"));
-        test.add(new DocumentHeader("key", "Title 6"));
-        test.add(new DocumentHeader("key", "Title 7"));
-        test.add(new DocumentHeader("key", "Title 8"));
-        test.add(new DocumentHeader("key", "Title 9"));
-        test.add(new DocumentHeader("key", "Title 10"));
-        test.add(new DocumentHeader("key", "Title 1"));
-        test.add(new DocumentHeader("key", "Title 2"));
-        test.add(new DocumentHeader("key", "Title 3"));
-        test.add(new DocumentHeader("key", "Title 4"));
-        test.add(new DocumentHeader("key", "Title 5"));
-        test.add(new DocumentHeader("key", "Title 6"));
-        test.add(new DocumentHeader("key", "Title 7"));
-        test.add(new DocumentHeader("key", "Title 8"));
-        test.add(new DocumentHeader("key", "Title 9"));
-        test.add(new DocumentHeader("key", "Title 10"));
-        this.headerList.setVisibleRange(0, test.size());
-        this.refresh(test);
-
         // Add the contents to the popup panel.
         this.setWidget(panel);
 
@@ -160,11 +126,7 @@ public class DocumentList extends PopupPanel {
                         new Notification("Please enter a valid document title.")
                                 .show();
                     } else if (name != null) {
-                        /*
-                         * TODO: Have backend create a new document. Get the
-                         * document.
-                         */
-                        Main.chrome.add(new Document(name, name, "", true));
+                        new DocAdder(Main.chrome).newDocument(new Document(null, name, "", true));
                         DocumentList.this.hide();
                     }
 

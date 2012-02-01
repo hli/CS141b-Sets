@@ -85,7 +85,7 @@ public class Editor extends Composite {
         
         // Setup the buttons for the toolbar of an unlocked document:
         Toolbar toolbar = new Toolbar();
-        toolbar.add(Main.chrome.btnDocumentLibrary);
+        toolbar.add(Main.chrome.btnDocumentLibrary());
         toolbar.add(this.btnRefresh);
         toolbar.add(this.btnCheckout);
         toolbar.add(this.btnComments);
@@ -97,7 +97,7 @@ public class Editor extends Composite {
     private Toolbar getLockedToolbar() {
 
         Toolbar toolbar = new Toolbar();
-        toolbar.add(Main.chrome.btnDocumentLibrary);
+        toolbar.add(Main.chrome.btnDocumentLibrary());
         toolbar.add(this.btnCommit);
         toolbar.add(this.btnCheckin);
         toolbar.add(this.btnComments);

@@ -75,6 +75,7 @@ public class Chrome extends Composite {
         
         // Setup the document list.
         this.documentList = new DocumentList();
+        new DocLister(this).getDocuments();
         
         // Add a welcome tab.
         this.tabPanel.add(new Welcome(), "Welcome");
@@ -129,8 +130,8 @@ public class Chrome extends Composite {
     /**
      * Document Library Toolbar Button.
      */
-    public ToolbarButton btnDocumentLibrary = 
-        new ToolbarButton(new Image(Resources.INSTANCE.documents()),
+    public ToolbarButton btnDocumentLibrary() {
+        return new ToolbarButton(new Image(Resources.INSTANCE.documents()),
             "Document Library", new ClickHandler() {
             public void onClick(ClickEvent event) {
             
@@ -138,4 +139,5 @@ public class Chrome extends Composite {
             
             }
         });
+    }
 }
