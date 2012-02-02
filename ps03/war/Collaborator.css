@@ -217,8 +217,6 @@ html {
 	padding: 5px;
 	border-bottom: 1px solid #ddd;
 }
-
-.commentCellList {
-	overflow: scroll;
-	height: 200px;
+.commentPager {
+	height: 100%;
 }

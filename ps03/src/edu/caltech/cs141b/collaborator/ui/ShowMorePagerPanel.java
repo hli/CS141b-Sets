@@ -60,6 +60,7 @@ public class ShowMorePagerPanel extends AbstractPager {
             - scrollable.getOffsetHeight();
         if (lastScrollPos >= maxScrollTop) {
           // We are near the end, so increase the page size.
+            new Notification(Integer.toString(display.getRowCount())).show();
           int newPageSize = Math.min(
               display.getVisibleRange().getLength() + incrementSize,
               display.getRowCount());
