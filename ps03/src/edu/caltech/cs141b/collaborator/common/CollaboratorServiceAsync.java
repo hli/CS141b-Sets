@@ -23,7 +23,7 @@ public interface CollaboratorServiceAsync {
 
     void getComments(String key, int start, int end, AsyncCallback<List<Comment>> callback);
     
-    void addComment(String key, Comment comment, AsyncCallback<Void> callback);
+    void addComment(String key, String comment, AsyncCallback<Void> callback);
     
     void getRevisions(String key, AsyncCallback<List<DocumentRevision>> callback);
 }

@@ -1,5 +1,7 @@
 package edu.caltech.cs141b.collaborator.ui;
 
+import java.util.Date;
+
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
@@ -8,19 +10,29 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.view.client.AsyncDataProvider;
+import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.Range;
 
+import edu.caltech.cs141b.collaborator.client.CommentAdder;
+import edu.caltech.cs141b.collaborator.client.CommentLister;
 import edu.caltech.cs141b.collaborator.common.Comment;
 import edu.caltech.cs141b.collaborator.common.Document;
 
 public class CommentList extends Composite implements KeyPressHandler {
 
+    private String key;
     private TextArea text;
     private CellList<Comment> comments;
+    private AsyncDataProvider<Comment> commentData;
     
     public CommentList(Document document) {
+        
+        this.key = document.getKey();
         
         // Create the panel that holds everything.
         FlowPanel panel = new FlowPanel();
@@ -33,6 +45,31 @@ public class CommentList extends Composite implements KeyPressHandler {
         
         // Create the cell list that holds the rest of the comments.
         this.comments = new CellList<Comment>(new CommentCell());
+        this.comments.setPageSize(20);
+        this.comments.setStyleName("commentCellList");
+        
+        // Create data provider.
+        this.commentData = new AsyncDataProvider<Comment>() {
+            @Override
+            protected void onRangeChanged(HasData<Comment> display) {
+
+              // Get the new range.
+              final Range range = display.getVisibleRange();
+
+              new CommentLister(CommentList.this, range).getComments(CommentList.this.key, range.getStart(), range.getLength());
+            }
+        };
+        this.commentData.addDataDisplay(this.comments);
+        
+        // Create a ShowMorePagerPanel.
+        ShowMorePagerPanel pager = new ShowMorePagerPanel();
+        //SimplePager pager = new SimplePager();
+
+        // Set the cellList as the display.
+        pager.setDisplay(this.comments);
+
+        // Add the pager and list to the page.
+        panel.add(pager);
         panel.add(this.comments);
         
         // Add the contents to the panel.
@@ -41,11 +78,15 @@ public class CommentList extends Composite implements KeyPressHandler {
         // Set the style to be "editor"
         this.setStyleName("commentList");
     }
-    
+
     public void onKeyPress(KeyPressEvent event) {
         if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
-            new Notification("Saving comment.").show();
+            new CommentAdder().addComment(this.key, this.text.getText());
         }
+    }
+    
+    public AsyncDataProvider<Comment> getCommentData() {
+        return this.commentData;
     }
     
     private class CommentCell extends AbstractCell<Comment> {
@@ -75,5 +116,5 @@ public class CommentList extends Composite implements KeyPressHandler {
         sb.appendHtmlConstant("</span>");
       }
     }
-
+    
 }

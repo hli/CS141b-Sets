@@ -74,7 +74,7 @@ public class DocumentData {
 
     public List<CommentData> getComments(int start, int end) {
         return this.comments.subList(start,
-                Math.min(end, this.comments.size() - 1));
+                Math.max(0, Math.min(end, this.comments.size() - 1)));
     }
 
     public void setTitle(String title) {

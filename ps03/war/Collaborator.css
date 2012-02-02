@@ -204,3 +204,21 @@ html {
 .revInfo .revisionTime:before {
     content: ' on ';
 }
+
+.commentList .commentBy {
+	display: block;
+	font-weight: bold;
+    text-align: left;
+    padding: 5px;
+}
+.commentList .comment {
+	display: block;
+	text-align: left;
+	padding: 5px;
+	border-bottom: 1px solid #ddd;
+}
+
+.commentCellList {
+	overflow: scroll;
+	height: 200px;
+}

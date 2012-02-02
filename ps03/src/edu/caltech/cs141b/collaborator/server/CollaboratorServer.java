@@ -306,21 +306,23 @@ public class CollaboratorServer extends RemoteServiceServlet implements
      * @param comment
      *   The comment to add.
      */
-    public void addComment(String key, Comment comment){
+    public void addComment(String key, String comment){
     	PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         try {
         	tx.begin();
         	DocumentData result = pm.getObjectById(DocumentData.class,
         			KeyFactory.stringToKey(key));
-        	result.addComment(comment.getMessage(), comment.getCommentBy());
+        	result.addComment(comment, this.getUserId());
+            pm.makePersistent(result);
+            tx.commit();
         } finally {
         	if (tx.isActive()) {
         		tx.rollback();
         	}
         }
     }
-    
+
     /**
      * Get document revisions.
      * 

@@ -95,7 +95,7 @@ public interface CollaboratorService extends RemoteService {
      * @param comment
      *   The comment to add.
      */
-    void addComment(String key, Comment comment);
+    void addComment(String key, String comment);
     
     /**
      * Get document revisions.
