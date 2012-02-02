@@ -61,7 +61,7 @@ public interface CollaboratorService extends RemoteService {
      * @throws LockExpired
      *   If the lock given to the document has expired.
      */
-    void checkinDocument(Document doc) throws LockExpired;
+    Document checkinDocument(Document doc) throws LockExpired;
     
     /**
      * Creates new document.

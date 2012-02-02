@@ -19,7 +19,7 @@ public interface CollaboratorServiceAsync {
     
     void newDocument(Document doc, AsyncCallback<Document> callback);
 
-    void checkinDocument(Document doc, AsyncCallback<Void> callback);
+    void checkinDocument(Document doc, AsyncCallback<Document> callback);
 
     void getComments(String key, int start, int end, AsyncCallback<List<Comment>> callback);
     

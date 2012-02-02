@@ -3,23 +3,23 @@ package edu.caltech.cs141b.collaborator.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import edu.caltech.cs141b.collaborator.common.Document;
 import edu.caltech.cs141b.collaborator.ui.Notification;
 
-import edu.caltech.cs141b.collaborator.common.Document;
 
 /**
- * Used in conjunction with <code>CollaboratorService.newDocument(Document doc)</code>.
+ * Used in conjunction with <code>CollaboratorService.getDocument(String key)</code>.
  */
-public class DocAdder implements AsyncCallback<Document> {
+public class DocGetter implements AsyncCallback<Document> {
 
 	private Chrome chrome;
 	
-    public DocAdder(Chrome chrome) {
+    public DocGetter(Chrome chrome) {
         this.chrome = chrome;
     }
 
-    public void newDocument(Document doc) {
-        Main.service.newDocument(doc, this);
+    public void getDocument(String key) {
+        Main.service.getDocument(key, this);
     }
 
     @Override
@@ -31,14 +31,11 @@ public class DocAdder implements AsyncCallback<Document> {
     		new Notification(caught.getClass() + " Error: "
                     + caught.getMessage()).show();    	
     	}
-        GWT.log("Error making new document.", caught);
+        GWT.log("Error getting document list.", caught);
     }
 
     @Override
     public void onSuccess(Document result) {
-        chrome.add(result);
-        new Notification("New document \"" + result.getTitle() + "\" made.").show();
-        new DocLister(chrome).getDocuments();
+        this.chrome.add(result);
     }
 }
-

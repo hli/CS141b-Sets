@@ -10,7 +10,7 @@ import edu.caltech.cs141b.collaborator.ui.Notification;
 import edu.caltech.cs141b.collaborator.common.DocumentHeader;
 
 /**
- * Used in conjunction with <code>CollaboratorService.getDocumentList()</code>.
+ * Used in conjunction with <code>CollaboratorService.getDocuments()</code>.
  */
 public class DocLister implements AsyncCallback<List<DocumentHeader>> {
 
@@ -26,8 +26,7 @@ public class DocLister implements AsyncCallback<List<DocumentHeader>> {
 
     @Override
     public void onFailure(Throwable caught) {
-        new Notification("Error retrieving document list"
-                + "; caught exception " + caught.getClass() + " with message: "
+    	new Notification(caught.getClass() + " Error: "
                 + caught.getMessage()).show();
         GWT.log("Error getting document list.", caught);
     }
@@ -36,10 +35,11 @@ public class DocLister implements AsyncCallback<List<DocumentHeader>> {
     public void onSuccess(List<DocumentHeader> result) {
         if (result == null || result.size() == 0) {
             new Notification("No documents available.").show();
-        } else {
+        } 
+        else {
+        	this.chrome.getDocumentList().refresh(result);
             new Notification("Document list updated.").show();
             GWT.log("Got " + result.size() + " documents.");
-            this.chrome.getDocumentList().refresh(result);
         }
     }
 }

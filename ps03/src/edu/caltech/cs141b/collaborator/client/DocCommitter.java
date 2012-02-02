@@ -1,7 +1,5 @@
 package edu.caltech.cs141b.collaborator.client;
 
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -9,10 +7,9 @@ import edu.caltech.cs141b.collaborator.ui.Notification;
 import edu.caltech.cs141b.collaborator.ui.Editor;
 
 import edu.caltech.cs141b.collaborator.common.Document;
-import edu.caltech.cs141b.collaborator.common.DocumentHeader;
 
 /**
- * Used in conjunction with <code>CollaboratorService.commitDocument()</code>.
+ * Used in conjunction with <code>CollaboratorService.commitDocument(Document doc)</code>.
  */
 public class DocCommitter implements AsyncCallback<Document> {
 
@@ -28,18 +25,24 @@ public class DocCommitter implements AsyncCallback<Document> {
 
     @Override
     public void onFailure(Throwable caught) {
-        new Notification("Error commiting document"
-                + "; caught exception " + caught.getClass() + " with message: "
-                + caught.getMessage()).show();
+    	if (caught.getClass().equals("LockExpired")) {
+    		new Notification(caught.getMessage()).show();
+    	}
+    	else if (caught.getClass().equals("JDOObjectNotFoundException")) {
+    		new Notification("ERROR: document does not exist.").show();
+    	}
+    	else {
+    		new Notification(caught.getClass() + " Error: "
+                    + caught.getMessage()).show();    	
+    	}
         GWT.log("Error commiting document.", caught);
     }
 
     @Override
     public void onSuccess(Document result) {
-    	new Notification("Document saved.").show();
-    	GWT.log("Document " + result + " saved.");
         this.editor.refresh(result);
-        
+    	new Notification("Document \"" + result.getTitle() + "\" saved.").show();
+    	GWT.log("Document " + result + " saved.");        
     }
 }
 

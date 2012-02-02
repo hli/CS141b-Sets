@@ -8,37 +8,38 @@ import edu.caltech.cs141b.collaborator.ui.Notification;
 import edu.caltech.cs141b.collaborator.common.Document;
 
 /**
- * Used in conjunction with <code>CollaboratorService.newDocument(Document doc)</code>.
+ * Used in conjunction with <code>CollaboratorService.checkoutDocument(String key)</code>.
  */
-public class DocAdder implements AsyncCallback<Document> {
+public class DocCheckouter implements AsyncCallback<Document> {
 
 	private Chrome chrome;
 	
-    public DocAdder(Chrome chrome) {
+    public DocCheckouter(Chrome chrome) {
         this.chrome = chrome;
     }
 
-    public void newDocument(Document doc) {
-        Main.service.newDocument(doc, this);
+    public void checkoutDocument(String key) {
+        Main.service.checkoutDocument(key, this);
     }
 
     @Override
     public void onFailure(Throwable caught) {
-    	if (caught.getClass().equals("JDOObjectNotFoundException")) {
+    	if (caught.getClass().equals("LockUnavailable")) {
+    		new Notification(caught.getMessage()).show();
+    	}
+    	else if (caught.getClass().equals("JDOObjectNotFoundException")) {
     		new Notification("ERROR: document does not exist.").show();
     	}
     	else {
     		new Notification(caught.getClass() + " Error: "
                     + caught.getMessage()).show();    	
     	}
-        GWT.log("Error making new document.", caught);
+        GWT.log("Error checking out document.", caught);
     }
 
     @Override
     public void onSuccess(Document result) {
         chrome.add(result);
-        new Notification("New document \"" + result.getTitle() + "\" made.").show();
-        new DocLister(chrome).getDocuments();
+        new Notification("Document \"" + result.getTitle() + "\" checked out.").show();
     }
 }
-

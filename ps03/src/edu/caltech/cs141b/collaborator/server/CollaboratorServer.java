@@ -135,7 +135,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
                     
                     tx.commit();
                 } else {
-                    throw new LockUnavailable("Available at : " +  
+                    throw new LockUnavailable("Document unavailable.  Try again at : " +  
                          (new Date(currentTime.getTime() + DELTA)).toString());
                 }      
             } catch (JDOObjectNotFoundException e) {
@@ -179,7 +179,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
             		result.setContents(doc.getContents(), this.getUserId());
 
             	} else {
-            		throw new LockExpired();
+            		throw new LockExpired("No longer have write access.");
             	}
       
             } catch (JDOObjectNotFoundException e) {
@@ -208,44 +208,37 @@ public class CollaboratorServer extends RemoteServiceServlet implements
      * @throws LockExpired
      *    if the client no longer has access to the document.
      */
-    public void checkinDocument(Document doc) throws LockExpired {
+    public Document checkinDocument(Document doc) throws LockExpired {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
-        DocumentData result = null;
         Date currentTime = new Date();
-
+        DocumentData result = null;
+        
         try {
             tx.begin();
             
-            try {      
-            	result = pm.getObjectById(DocumentData.class,
-            			KeyFactory.stringToKey(doc.getKey()));
-            	if (result.getLockedUntil().after(currentTime) &&
-            			result.getLockedBy().equals(this.getUserId())) {
+            result = pm.getObjectById(DocumentData.class,
+            		KeyFactory.stringToKey(doc.getKey()));
 
-            		result.setTitle(doc.getTitle());
-            		result.setContents(doc.getContents(), this.getUserId());
+            if (result.getLockedUntil().after(currentTime) &&
+            		result.getLockedBy().equals(this.getUserId())) {
 
-            	} else {
-            		throw new LockExpired();
-            	}
-      
-            } catch (JDOObjectNotFoundException e) {
+            	result.unlock();
+            	pm.makePersistent(result);
+
+            	tx.commit();
+            } else {
+            	throw new LockExpired("No longer have write access.");
             }
 
-            pm.makePersistent(result);
-            
-            tx.commit();
-            
         } finally {
             if (tx.isActive()) {
                 tx.rollback();
             }
         }
-        new Document(result.getKey(), result.getTitle(), 
-                result.getContents(), true);
+        return new Document(result.getKey(), result.getTitle(), 
+                result.getContents(), false);
     }
-
     
     /**
      * Creates new document.
