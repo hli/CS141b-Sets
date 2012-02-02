@@ -22,7 +22,7 @@ public class Main implements EntryPoint {
             .create(CollaboratorService.class);
     
     public void onModuleLoad() {
-
+        
         // Add the default chrome contents.
         Main.chrome.init();
         

@@ -5,9 +5,8 @@ import java.util.HashMap;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 import edu.caltech.cs141b.collaborator.common.Document;
@@ -23,7 +22,7 @@ import edu.caltech.cs141b.collaborator.ui.ToolbarButton;
  * @author joewang
  *
  */
-public class Chrome extends Composite {
+public class Chrome extends ResizeComposite {
 
     /**
      * Tabs that line the top of the interface.
@@ -44,10 +43,7 @@ public class Chrome extends Composite {
      * Class Constructor.
      */
     public Chrome() {
-        
-        // Create the panel that holds everything.
-        FlowPanel panel = new FlowPanel();
-        
+               
         // Setup the editors.
         this.editors = new HashMap<String, Editor>();
         
@@ -55,10 +51,9 @@ public class Chrome extends Composite {
         this.tabPanel = new TabLayoutPanel(50, Unit.PX);
         this.tabPanel.setHeight("100%");
         this.tabPanel.setStyleName("tabPanel");
-        panel.add(this.tabPanel);
         
         // Initialize the widgets.
-        this.initWidget(panel);
+        this.initWidget(this.tabPanel);
     }
     
     /**
@@ -90,9 +85,8 @@ public class Chrome extends Composite {
             Editor e = new Editor(document, t);
             this.editors.put(document.getKey(), e);
             this.tabPanel.add(e, t);
-        } else {
-            this.editors.get(document.getKey()).refresh(document);
         }
+        this.editors.get(document.getKey()).refresh(document);
     }
     
     /**
@@ -136,18 +130,6 @@ public class Chrome extends Composite {
     }
     
     /**
-     * Get Document List
-     * 
-     * Returns a handle to the active document list.
-     * 
-     * @return
-     *   Document list.
-     */
-    public DocumentList getDocumentList() {
-        return this.documentList;
-    }
-    
-    /**
      * Document Library Toolbar Button.
      */
     public ToolbarButton btnDocumentLibrary() {
@@ -155,7 +137,7 @@ public class Chrome extends Composite {
             "Document Library", new ClickHandler() {
             public void onClick(ClickEvent event) {
             
-                new DocLister(Chrome.this).getDocuments();
+                new DocLister(Chrome.this.documentList).getDocuments();
             
             }
         });

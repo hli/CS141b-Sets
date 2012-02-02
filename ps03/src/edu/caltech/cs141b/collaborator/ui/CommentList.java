@@ -1,7 +1,5 @@
 package edu.caltech.cs141b.collaborator.ui;
 
-import java.util.Date;
-
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -11,10 +9,8 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -82,8 +78,11 @@ public class CommentList extends Composite implements KeyPressHandler {
     public void onKeyPress(KeyPressEvent event) {
         if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
             new CommentAdder(this).addComment(this.key, this.text.getText());
-            this.text.setText("");
         }
+    }
+    
+    public void clearText() {
+        this.text.setText("");
     }
 
     public CellList<Comment> getComments() {

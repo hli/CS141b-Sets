@@ -4,9 +4,9 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 
@@ -18,7 +18,7 @@ import edu.caltech.cs141b.collaborator.client.Main;
 import edu.caltech.cs141b.collaborator.client.RevisionLister;
 import edu.caltech.cs141b.collaborator.common.Document;
 
-public class Editor extends Composite {
+public class Editor extends ResizeComposite {
 
     private Document document;
     private DocumentTab tab;
@@ -61,9 +61,6 @@ public class Editor extends Composite {
         }
         this.textCommentsPanel.add(this.textarea);
         panel.add(this.textCommentsPanel);
-        
-        // Call refresh routine to setup editor contents.
-        this.refresh(document);
         
         // Initialize the widgets.
         this.initWidget(panel);

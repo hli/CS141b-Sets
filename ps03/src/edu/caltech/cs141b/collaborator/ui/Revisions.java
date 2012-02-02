@@ -1,7 +1,5 @@
 package edu.caltech.cs141b.collaborator.ui;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.dom.client.Style.Unit;
@@ -12,11 +10,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 
-import edu.caltech.cs141b.collaborator.client.RevisionLister;
-import edu.caltech.cs141b.collaborator.common.Document;
 import edu.caltech.cs141b.collaborator.common.DocumentRevision;
 
 public class Revisions extends PopupPanel {
@@ -24,7 +19,6 @@ public class Revisions extends PopupPanel {
     private List<DocumentRevision> revisions;
     private int cursor = 0;
     
-    private Label revisionTitle;
     private Label revisionBy;
     private Label revisionTime;
     private TextArea revisionText;
@@ -44,10 +38,6 @@ public class Revisions extends PopupPanel {
         // Setup the revision information area.
         FlowPanel revInfo = new FlowPanel();
         revInfo.setStyleName("revInfo");
-        
-        this.revisionTitle = new Label();
-        this.revisionTitle.setStyleName("revisionTitle");
-        revInfo.add(this.revisionTitle);
         
         this.revisionBy = new Label();
         this.revisionBy.setStyleName("revisionBy");
@@ -85,7 +75,6 @@ public class Revisions extends PopupPanel {
     }
     
     private void update(DocumentRevision revision) {
-        this.revisionTitle.setText(revision.getTitle());
         this.revisionBy.setText(revision.getUpdatedBy());
         this.revisionTime.setText(revision.getUpdatedTime().toString());
         this.revisionText.setText(revision.getContents());

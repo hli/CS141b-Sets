@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import edu.caltech.cs141b.collaborator.ui.DocumentList;
 import edu.caltech.cs141b.collaborator.ui.Notification;
 
 import edu.caltech.cs141b.collaborator.common.DocumentHeader;
@@ -14,10 +15,10 @@ import edu.caltech.cs141b.collaborator.common.DocumentHeader;
  */
 public class DocLister implements AsyncCallback<List<DocumentHeader>> {
 
-	private Chrome chrome;
+	private DocumentList documentList;
 	
-    public DocLister(Chrome chrome) {
-        this.chrome = chrome;
+    public DocLister(DocumentList documentList) {
+        this.documentList = documentList;
     }
 
     public void getDocuments() {
@@ -37,8 +38,8 @@ public class DocLister implements AsyncCallback<List<DocumentHeader>> {
             new Notification("No documents available.").show();
         } 
         else {
-        	this.chrome.getDocumentList().refresh(result);
-        	this.chrome.getDocumentList().show();
+        	this.documentList.refresh(result);
+        	this.documentList.show();
             GWT.log("Got " + result.size() + " documents.");
         }
     }

@@ -43,7 +43,7 @@ html {
 
 .documentList .headerList {
 	height: 350px;
-	overflow: scroll;
+	overflow: auto;
 }
 
 .documentList .title {
@@ -141,8 +141,10 @@ html {
 
 .editor .gwt-TextArea {
 	width: 600px;
+	height: 100%;
 	margin: 0 auto;
-	padding: 30px;
+	padding-left: 30px;
+	padding-right: 30px;
 	border: 0;
 	font-family: monospace;
 	resize: none;
@@ -194,12 +196,8 @@ html {
 .revInfo > div {
 	display: inline;
 }
-.revInfo .revisionTitle {
-	font-size: 28px;
-	font-family: Helvetica;
-}
 .revInfo .revisionBy:before {
-	content: ' by ';
+	content: 'Revision by ';
 }
 .revInfo .revisionTime:before {
     content: ' on ';

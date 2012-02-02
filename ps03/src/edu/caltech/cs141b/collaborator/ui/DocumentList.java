@@ -18,8 +18,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
 
 import edu.caltech.cs141b.collaborator.client.DocAdder;
 import edu.caltech.cs141b.collaborator.client.DocGetter;
@@ -46,11 +44,6 @@ public class DocumentList extends PopupPanel {
      * The list widget being displayed.
      */
     private CellList<DocumentHeader> headerList;
-    
-    /**
-     * The currently selected document.
-     */
-    private DocumentHeader headerSelected;
 
     /**
      * Class Constructor.
@@ -73,17 +66,6 @@ public class DocumentList extends PopupPanel {
         this.headerList.setStyleName("headerList");
         this.headerData = new ListDataProvider<DocumentHeader>();
         this.headerData.addDataDisplay(this.headerList);
-
-        // Add a selection model to handle user selection.
-        final SingleSelectionModel<DocumentHeader> selectionModel = new SingleSelectionModel<DocumentHeader>();
-        this.headerList.setSelectionModel(selectionModel);
-        selectionModel
-                .addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-                    public void onSelectionChange(SelectionChangeEvent event) {
-                        DocumentList.this.headerSelected = selectionModel
-                                .getSelectedObject();
-                    }
-                });
 
         panel.add(this.headerList);
 

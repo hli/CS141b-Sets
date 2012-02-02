@@ -3,7 +3,6 @@ package edu.caltech.cs141b.collaborator.server;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -29,9 +28,6 @@ import edu.caltech.cs141b.collaborator.server.data.DocumentRevisionData;
 @SuppressWarnings("serial")
 public class CollaboratorServer extends RemoteServiceServlet implements
     CollaboratorService {
-
-    private static final Logger log = Logger
-            .getLogger(CollaboratorServer.class.toString());
     
     private static final long DELTA = 60 * 60 * 1000;
     

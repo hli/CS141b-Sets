@@ -6,8 +6,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import edu.caltech.cs141b.collaborator.ui.CommentList;
 import edu.caltech.cs141b.collaborator.ui.Notification;
 
-import edu.caltech.cs141b.collaborator.common.Comment;
-
 /**
  * Used in conjunction with <code>CollaboratorService.addComment()</code>.
  */
@@ -38,6 +36,7 @@ public class CommentAdder implements AsyncCallback<Void> {
     @Override
     public void onSuccess(Void _) {
         new Notification("Comment added.").show();
+        this.commentList.clearText();
         new CommentNumGetter(this.commentList).getNumComments(this.commentList.getKey());
     }
 }
