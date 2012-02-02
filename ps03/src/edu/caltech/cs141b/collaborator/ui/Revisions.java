@@ -15,12 +15,12 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 
+import edu.caltech.cs141b.collaborator.client.RevisionLister;
 import edu.caltech.cs141b.collaborator.common.Document;
 import edu.caltech.cs141b.collaborator.common.DocumentRevision;
 
 public class Revisions extends PopupPanel {
 
-    private String key;
     private List<DocumentRevision> revisions;
     private int cursor = 0;
     
@@ -29,9 +29,8 @@ public class Revisions extends PopupPanel {
     private Label revisionTime;
     private TextArea revisionText;
     
-    public Revisions(Document document) {
+    public Revisions() {
         super(true, true);
-        this.key = document.getKey();
         
         // Create the panel that holds everything.
         DockLayoutPanel panel = new DockLayoutPanel(Unit.PX);
@@ -72,22 +71,17 @@ public class Revisions extends PopupPanel {
         this.setGlassEnabled(true);
         this.setWidget(panel);
         
-        
-        /* Temp stuff. */
-        this.revisions = new ArrayList<DocumentRevision>();
-        this.revisions.add(new DocumentRevision("key1", "title1", "text1",
-            new Date(), "me"));
-        this.revisions.add(new DocumentRevision("key2", "title2", "text2",
-                new Date(), "me"));
     }
     
     public void show() {
-        /* TODO: get the list of revisions for this document. */
-        
         this.cursor = 0;
         this.update(this.revisions.get(this.cursor));
         super.show();
         this.center();
+    }
+
+    public void refresh(List<DocumentRevision> revisions) {
+        this.revisions = revisions;
     }
     
     private void update(DocumentRevision revision) {

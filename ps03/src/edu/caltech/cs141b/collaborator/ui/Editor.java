@@ -17,6 +17,7 @@ import edu.caltech.cs141b.collaborator.client.DocCheckouter;
 import edu.caltech.cs141b.collaborator.client.DocCommitter;
 import edu.caltech.cs141b.collaborator.client.DocGetter;
 import edu.caltech.cs141b.collaborator.client.Main;
+import edu.caltech.cs141b.collaborator.client.RevisionLister;
 import edu.caltech.cs141b.collaborator.common.Document;
 
 public class Editor extends Composite {
@@ -53,7 +54,7 @@ public class Editor extends Composite {
         this.comments.setVisible(false);
         
         // Setup the document revisions popup.
-        this.revisions = new Revisions(document);
+        this.revisions = new Revisions();
         
         // Setup the text area.
         this.textarea = new TextArea();
@@ -90,6 +91,14 @@ public class Editor extends Composite {
         
         // Update the document contents.
         this.textarea.setText(document.getContents());
+    }
+    
+    public Document getDocument() {
+        return this.document;
+    }
+    
+    public Revisions getRevisionList() {
+        return this.revisions;
     }
     
     private Toolbar getUnlockedToolbar() {
@@ -163,10 +172,10 @@ public class Editor extends Composite {
         new ToolbarButton(new Image(Resources.INSTANCE.commit()),
                 "Save Document", new ClickHandler() {
             public void onClick(ClickEvent event) {
-                
-                Editor.this.document.setContents(Editor.this.textarea.getText());
-                new DocCommitter(Editor.this).commitDocument(Editor.this.document);
-                
+                if (!Editor.this.textarea.getText().equals(Editor.this.document.getContents())) {
+                    Editor.this.document.setContents(Editor.this.textarea.getText());
+                    new DocCommitter(Editor.this).commitDocument(Editor.this.document);
+                }
             }
         });
     
@@ -201,7 +210,7 @@ public class Editor extends Composite {
                 "Revisions", new ClickHandler() {
             public void onClick(ClickEvent event) {
                 
-                Editor.this.revisions.show();
+                new RevisionLister(Editor.this).getRevisions(Editor.this.document.getKey());
                 
             }
         });

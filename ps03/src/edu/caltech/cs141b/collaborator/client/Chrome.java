@@ -160,7 +160,7 @@ public class Chrome extends Composite {
             "Document Library", new ClickHandler() {
             public void onClick(ClickEvent event) {
             
-                Chrome.this.documentList.show();
+                new DocLister(Chrome.this).getDocuments();
             
             }
         });
