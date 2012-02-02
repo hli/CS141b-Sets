@@ -166,7 +166,6 @@ public class Editor extends Composite {
                 
                 Editor.this.document.setContents(Editor.this.textarea.getText());
                 new DocCommitter(Editor.this).commitDocument(Editor.this.document);
-                Editor.this.textarea.setEnabled(false);
                 
             }
         });
@@ -177,7 +176,7 @@ public class Editor extends Composite {
             public void onClick(ClickEvent event) {
                 
                 new DocCheckinner(Editor.this).checkinDocument(Editor.this.document);
-                
+                Editor.this.textarea.setEnabled(false);
             }
         });
     
