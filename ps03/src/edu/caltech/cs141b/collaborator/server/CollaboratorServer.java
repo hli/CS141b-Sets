@@ -85,19 +85,16 @@ public class CollaboratorServer extends RemoteServiceServlet implements
      */
     public Document getDocument(String key) {
 
-        PersistenceManager pm = PMF.get().getPersistenceManager();
-        Document doc = null;
+    	PersistenceManager pm = PMF.get().getPersistenceManager();
+    	Document doc = null;
 
-        try {
-            DocumentData result = pm.getObjectById(DocumentData.class,
-                    KeyFactory.stringToKey(key));
-            
-            doc = new Document(result.getKey(), result.getTitle(),
-                    result.getContents(), false);
-        } catch (JDOObjectNotFoundException e) {
-        }
+    	DocumentData result = pm.getObjectById(DocumentData.class,
+    			KeyFactory.stringToKey(key));
 
-        return doc;
+    	doc = new Document(result.getKey(), result.getTitle(),
+    			result.getContents(), false);
+
+    	return doc;
     }
   
     /**
@@ -118,29 +115,26 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         Date currentTime = new Date();
 
         try {
-            tx.begin();
-            
-            try {
-                DocumentData result = pm.getObjectById(DocumentData.class,
-                        KeyFactory.stringToKey(key));
-    
-                if (result.getLockedUntil() == null ||
-                        result.getLockedUntil().before(currentTime) ||
-                        result.getLockedBy().equals(this.getUserId())) {
-                    doc = new Document(result.getKey(), result.getTitle(),
-                            result.getContents(), true);
-                    result.lock(this.getUserId(), 
-                            new Date(currentTime.getTime() + DELTA));
-                    pm.makePersistent(result);
-                    
-                    tx.commit();
-                } else {
-                    throw new LockUnavailable("Document unavailable.  Try again at : " +  
-                         (new Date(currentTime.getTime() + DELTA)).toString());
-                }      
-            } catch (JDOObjectNotFoundException e) {
-            }
-            
+        	tx.begin();
+
+        	DocumentData result = pm.getObjectById(DocumentData.class,
+        			KeyFactory.stringToKey(key));
+
+        	if (result.getLockedUntil() == null ||
+        			result.getLockedUntil().before(currentTime) ||
+        			result.getLockedBy().equals(this.getUserId())) {
+        		doc = new Document(result.getKey(), result.getTitle(),
+        				result.getContents(), true);
+        		result.lock(this.getUserId(), 
+        				new Date(currentTime.getTime() + DELTA));
+        		pm.makePersistent(result);
+
+        		tx.commit();
+        	} else {
+        		throw new LockUnavailable("Document unavailable.  Try again at : " +  
+        				(new Date(currentTime.getTime() + DELTA)).toString());
+        	}      
+
         } finally {
             if (tx.isActive()) {
                 tx.rollback();
@@ -168,21 +162,17 @@ public class CollaboratorServer extends RemoteServiceServlet implements
 
         try {
             tx.begin();
-            
-            try {      
-            	result = pm.getObjectById(DocumentData.class,
-            			KeyFactory.stringToKey(doc.getKey()));
-            	if (result.getLockedUntil().after(currentTime) &&
-            			result.getLockedBy().equals(this.getUserId())) {
+               
+            result = pm.getObjectById(DocumentData.class,
+            		KeyFactory.stringToKey(doc.getKey()));
+            if (result.getLockedUntil().after(currentTime) &&
+            		result.getLockedBy().equals(this.getUserId())) {
 
-            		result.setTitle(doc.getTitle());
-            		result.setContents(doc.getContents(), this.getUserId());
+            	result.setTitle(doc.getTitle());
+            	result.setContents(doc.getContents(), this.getUserId());
 
-            	} else {
-            		throw new LockExpired("No longer have write access.");
-            	}
-      
-            } catch (JDOObjectNotFoundException e) {
+            } else {
+            	throw new LockExpired("No longer have write access.");
             }
 
             pm.makePersistent(result);
@@ -256,18 +246,12 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         Date currentTime = new Date();
 
         try {
-            tx.begin();
-            
-            try { 
-                result = new DocumentData(doc.getTitle(), 
-                        doc.getContents(), this.getUserId(), this.getUserId(), 
-                        new Date(currentTime.getTime() + DELTA));
-      
-            } catch (JDOObjectNotFoundException e) {
-            }
+        	tx.begin();
 
+        	result = new DocumentData(doc.getTitle(), 
+        			doc.getContents(), this.getUserId(), this.getUserId(), 
+        			new Date(currentTime.getTime() + DELTA));
             pm.makePersistent(result);
-            
             tx.commit();
             
         } finally {
@@ -297,20 +281,16 @@ public class CollaboratorServer extends RemoteServiceServlet implements
     	
         List<Comment> comments = new ArrayList<Comment>();
 
-        try {
-            DocumentData result = pm.getObjectById(DocumentData.class,
-                    KeyFactory.stringToKey(key));
-            
-            List<CommentData> commentdata = result.getComments(start, end);
-            if (!commentdata.isEmpty()) {
-                for (CommentData c : commentdata) {
-                    comments.add(new Comment(c.getCommentTime(), c.getCommentBy(), c.getMessage()));
-                }
-            }
-            
-        } catch (JDOObjectNotFoundException e) {
+        DocumentData result = pm.getObjectById(DocumentData.class,
+        		KeyFactory.stringToKey(key));
+
+        List<CommentData> commentdata = result.getComments(start, end);
+        if (!commentdata.isEmpty()) {
+        	for (CommentData c : commentdata) {
+        		comments.add(new Comment(c.getCommentTime(), c.getCommentBy(), c.getMessage()));
+        	}
         }
-        
+
         return comments;
         
     }
@@ -324,13 +304,16 @@ public class CollaboratorServer extends RemoteServiceServlet implements
      */
     public void addComment(String key, Comment comment){
     	PersistenceManager pm = PMF.get().getPersistenceManager();
-    	
+        Transaction tx = pm.currentTransaction();
         try {
-            DocumentData result = pm.getObjectById(DocumentData.class,
-                    KeyFactory.stringToKey(key));
-            result.addComment(comment.getMessage(), comment.getCommentBy());
-            
-        } catch (JDOObjectNotFoundException e) {
+        	tx.begin();
+        	DocumentData result = pm.getObjectById(DocumentData.class,
+        			KeyFactory.stringToKey(key));
+        	result.addComment(comment.getMessage(), comment.getCommentBy());
+        } finally {
+        	if (tx.isActive()) {
+        		tx.rollback();
+        	}
         }
     }
     
