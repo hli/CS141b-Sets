@@ -180,6 +180,8 @@ html {
     border: 0;
     font-family: monospace;
     resize: none;
+    width: 540px;
+    height: 450px;
 }
 .revisions .gwt-TextArea:focus {
     outline: 0;
