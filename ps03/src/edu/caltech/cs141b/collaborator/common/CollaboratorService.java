@@ -89,6 +89,13 @@ public interface CollaboratorService extends RemoteService {
     List<Comment> getComments(String key, int start, int end);
     
     /**
+     * Get number of comments.
+     * @param key
+     * @return Integer
+     */
+    Integer getNumComments(String key);
+    
+    /**
      * Add comment to document.
      * @param key
      *   The key of the document to add the comment to.

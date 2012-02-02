@@ -299,6 +299,15 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         
     }
     
+    public Integer getNumComments(String key) {
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        
+            DocumentData result = pm.getObjectById(DocumentData.class,
+            KeyFactory.stringToKey(key));
+            
+            return result.getNumComments();
+    }
+    
     /**
      * Add comment to document.
      * @param key

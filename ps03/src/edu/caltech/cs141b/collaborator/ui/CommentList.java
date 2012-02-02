@@ -22,6 +22,7 @@ import com.google.gwt.view.client.Range;
 
 import edu.caltech.cs141b.collaborator.client.CommentAdder;
 import edu.caltech.cs141b.collaborator.client.CommentLister;
+import edu.caltech.cs141b.collaborator.client.CommentNumGetter;
 import edu.caltech.cs141b.collaborator.common.Comment;
 import edu.caltech.cs141b.collaborator.common.Document;
 
@@ -48,6 +49,7 @@ public class CommentList extends Composite implements KeyPressHandler {
         // Create the cell list that holds the rest of the comments.
         this.comments = new CellList<Comment>(new CommentCell());
         this.comments.setPageSize(20);
+        new CommentNumGetter(this).getNumComments(this.key);
         
         // Create data provider.
         this.commentData = new AsyncDataProvider<Comment>() {
@@ -83,6 +85,10 @@ public class CommentList extends Composite implements KeyPressHandler {
             new CommentAdder().addComment(this.key, this.text.getText());
             this.text.setText("");
         }
+    }
+
+    public CellList<Comment> getComments() {
+        return this.comments;
     }
     
     public AsyncDataProvider<Comment> getCommentData() {

@@ -77,6 +77,10 @@ public class DocumentData {
                 Math.min(end, this.comments.size()));
     }
 
+    public Integer getNumComments() {
+        return this.comments.size();
+    }
+    
     public void setTitle(String title) {
         this.title = title;
     }
