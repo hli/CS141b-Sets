@@ -33,7 +33,7 @@ public class DocumentData {
     private List<DocumentRevisionData> revisions = new ArrayList<DocumentRevisionData>();
 
     @Persistent(mappedBy = "document")
-    @Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "commentTime desc"))
+    @Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "commentTime asc"))
     private List<CommentData> comments = new ArrayList<CommentData>();
 
     public DocumentData(String title, String contents, String updatedBy,

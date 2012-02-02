@@ -65,7 +65,6 @@ public class CommentList extends Composite implements KeyPressHandler {
         // Create a ShowMorePagerPanel.
         ShowMorePagerPanel pager = new ShowMorePagerPanel();
         pager.setStyleName("commentPager");
-        //SimplePager pager = new SimplePager();
 
         // Set the cellList as the display.
         pager.setDisplay(this.comments);
@@ -82,7 +81,7 @@ public class CommentList extends Composite implements KeyPressHandler {
 
     public void onKeyPress(KeyPressEvent event) {
         if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
-            new CommentAdder().addComment(this.key, this.text.getText());
+            new CommentAdder(this).addComment(this.key, this.text.getText());
             this.text.setText("");
         }
     }
@@ -93,6 +92,10 @@ public class CommentList extends Composite implements KeyPressHandler {
     
     public AsyncDataProvider<Comment> getCommentData() {
         return this.commentData;
+    }
+    
+    public String getKey() {
+        return this.key;
     }
     
     private class CommentCell extends AbstractCell<Comment> {

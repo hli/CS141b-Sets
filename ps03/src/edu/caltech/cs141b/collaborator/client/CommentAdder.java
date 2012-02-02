@@ -3,6 +3,7 @@ package edu.caltech.cs141b.collaborator.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import edu.caltech.cs141b.collaborator.ui.CommentList;
 import edu.caltech.cs141b.collaborator.ui.Notification;
 
 import edu.caltech.cs141b.collaborator.common.Comment;
@@ -12,6 +13,12 @@ import edu.caltech.cs141b.collaborator.common.Comment;
  */
 public class CommentAdder implements AsyncCallback<Void> {
 
+    private CommentList commentList;
+
+    public CommentAdder(CommentList commentList) {
+        this.commentList = commentList;
+    }
+    
     public void addComment(String key, String com) {
         Main.service.addComment(key, com, this);
     }
@@ -31,5 +38,6 @@ public class CommentAdder implements AsyncCallback<Void> {
     @Override
     public void onSuccess(Void _) {
         new Notification("Comment added.").show();
+        new CommentNumGetter(this.commentList).getNumComments(this.commentList.getKey());
     }
 }
