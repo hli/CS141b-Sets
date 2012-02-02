@@ -33,7 +33,7 @@ public class Document implements IsSerializable {
         return this.contents;
     }
 
-    public Boolean setTitle(String title) {
+    public boolean setTitle(String title) {
         if (this.isLocked()) {
             this.title = title;
             return true;
@@ -41,7 +41,7 @@ public class Document implements IsSerializable {
         return false;
     }
 
-    public Boolean setContents(String contents) {
+    public boolean setContents(String contents) {
         if (this.isLocked()) {
             this.contents = contents;
             return true;

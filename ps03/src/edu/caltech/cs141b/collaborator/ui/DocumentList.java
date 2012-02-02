@@ -23,6 +23,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import edu.caltech.cs141b.collaborator.client.DocAdder;
+import edu.caltech.cs141b.collaborator.client.DocGetter;
 import edu.caltech.cs141b.collaborator.client.Main;
 import edu.caltech.cs141b.collaborator.common.Document;
 import edu.caltech.cs141b.collaborator.common.DocumentHeader;
@@ -66,8 +67,6 @@ public class DocumentList extends PopupPanel {
         // Create the toolbar for managing documents.
         Toolbar toolbar = new Toolbar();
         toolbar.add(this.btnNewDocument);
-        toolbar.add(this.btnEditTitle);
-        toolbar.add(this.btnDeleteDocument);
         panel.add(toolbar);
 
         // Create the list of document headers.
@@ -134,53 +133,6 @@ public class DocumentList extends PopupPanel {
             });
 
     /**
-     * Edit Title Toolbar Button.
-     */
-    private ToolbarButton btnEditTitle = new ToolbarButton(new Image(
-            Resources.INSTANCE.editTitle()), "Edit Title", new ClickHandler() {
-        public void onClick(ClickEvent event) {
-
-            if (DocumentList.this.headerSelected != null) {
-                String name = Window.prompt("Enter a new document title:",
-                        DocumentList.this.headerSelected.getTitle());
-                if (name != null && name.equals("")) {
-                    new Notification("Please enter a valid document title.")
-                            .show();
-                } else if (name != null) {
-                    /*
-                     * TODO: Have backend save the document. Refresh the
-                     * document. Refresh the document list.
-                     */
-                }
-            } else {
-                new Notification("Please select a document first.").show();
-            }
-
-        }
-    });
-
-    /**
-     * Delete Document Toolbar Button.
-     */
-    private ToolbarButton btnDeleteDocument = new ToolbarButton(new Image(
-            Resources.INSTANCE.deleteDocument()), "Delete Document",
-            new ClickHandler() {
-                public void onClick(ClickEvent event) {
-
-                    if (DocumentList.this.headerSelected != null) {
-                        Main.chrome.remove(DocumentList.this.headerSelected.getKey());
-                        /*
-                         * TODO: Have backend delete the document.
-                         * Refresh the document list.
-                         */
-                    } else {
-                        new Notification("Please select a document first.").show();
-                    }
-
-                }
-            });
-
-    /**
      * Document Header Cell
      * 
      * Cell that handles and renders the document library.
@@ -215,8 +167,7 @@ public class DocumentList extends PopupPanel {
                 EventTarget eventTarget = event.getEventTarget();
                 if (parent.getFirstChildElement().isOrHasChild(
                         Element.as(eventTarget))) {
-                    new Notification("Opening Document").show();
-                    /* TODO: Load the document in a new editor. */
+                    new DocGetter(Main.chrome).getDocument(value.getKey());
                     DocumentList.this.hide();
                 }
             }

@@ -12,11 +12,16 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 
+import edu.caltech.cs141b.collaborator.client.DocCheckinner;
+import edu.caltech.cs141b.collaborator.client.DocCheckouter;
+import edu.caltech.cs141b.collaborator.client.DocCommitter;
+import edu.caltech.cs141b.collaborator.client.DocGetter;
 import edu.caltech.cs141b.collaborator.client.Main;
 import edu.caltech.cs141b.collaborator.common.Document;
 
 public class Editor extends Composite {
 
+    private Document document;
     private DocumentTab tab;
     private SimplePanel toolbarPanel;
     private DockLayoutPanel textCommentsPanel;
@@ -25,6 +30,9 @@ public class Editor extends Composite {
     private Revisions revisions;
     
     public Editor(Document document, DocumentTab tab) {
+        
+        // Associate with document.
+        this.document = document;
         
         // Associate with chrome document tab.
         this.tab = tab;
@@ -74,6 +82,9 @@ public class Editor extends Composite {
             this.toolbarPanel.setWidget(this.getUnlockedToolbar());
         }
         
+        // Update the local document.
+        this.document = document;
+        
         // Update the title.
         this.tab.setTitle(document);
         
@@ -98,6 +109,7 @@ public class Editor extends Composite {
 
         Toolbar toolbar = new Toolbar();
         toolbar.add(Main.chrome.btnDocumentLibrary());
+        toolbar.add(this.btnEditTitle);
         toolbar.add(this.btnCommit);
         toolbar.add(this.btnCheckin);
         toolbar.add(this.btnComments);
@@ -111,7 +123,7 @@ public class Editor extends Composite {
                 "Refresh Document", new ClickHandler() { 
             public void onClick(ClickEvent event) {
                 
-                new Notification("Refresh").show();
+                new DocGetter(Main.chrome).getDocument(Editor.this.document.getKey());
                 
             }
         });
@@ -121,17 +133,40 @@ public class Editor extends Composite {
                 "Lock Document", new ClickHandler() {
             public void onClick(ClickEvent event) {
                 
-                new Notification("Checkout").show();
+                new DocCheckouter(Editor.this).checkoutDocument(Editor.this.document.getKey());
+                Editor.this.textarea.setEnabled(true);
                 
             }
         });
+    
+    /**
+     * Edit Title Toolbar Button.
+     */
+    private ToolbarButton btnEditTitle = new ToolbarButton(new Image(
+            Resources.INSTANCE.editTitle()), "Edit Title", new ClickHandler() {
+        public void onClick(ClickEvent event) {
+
+            String name = Window.prompt("Enter a new document title:",
+                    Editor.this.document.getTitle());
+            if (name != null && name.equals("")) {
+                new Notification("Please enter a valid document title.")
+                        .show();
+            } else if (name != null) {
+                Editor.this.document.setTitle(name);
+                new DocCommitter(Editor.this).commitDocument(Editor.this.document);
+            }
+
+        }
+    });
     
     private ToolbarButton btnCommit = 
         new ToolbarButton(new Image(Resources.INSTANCE.commit()),
                 "Save Document", new ClickHandler() {
             public void onClick(ClickEvent event) {
                 
-                new Notification("Commit").show();
+                Editor.this.document.setContents(Editor.this.textarea.getText());
+                new DocCommitter(Editor.this).commitDocument(Editor.this.document);
+                Editor.this.textarea.setEnabled(false);
                 
             }
         });
@@ -141,7 +176,7 @@ public class Editor extends Composite {
                 "Unlock Document", new ClickHandler() {
             public void onClick(ClickEvent event) {
                 
-                new Notification("Checkin").show();
+                new DocCheckinner(Editor.this).checkinDocument(Editor.this.document);
                 
             }
         });

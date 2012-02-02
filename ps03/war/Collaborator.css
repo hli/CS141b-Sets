@@ -38,6 +38,7 @@ html {
 	border: 1px solid #ddd;
 	height: 400px;
 	box-shadow: 0 0 15px #aaa;
+	background: #eee;
 }
 
 .documentList .headerList {

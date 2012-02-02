@@ -168,8 +168,12 @@ public class CollaboratorServer extends RemoteServiceServlet implements
             if (result.getLockedUntil().after(currentTime) &&
             		result.getLockedBy().equals(this.getUserId())) {
 
-            	result.setTitle(doc.getTitle());
-            	result.setContents(doc.getContents(), this.getUserId());
+                if (doc.getTitle() != null) {
+                    result.setTitle(doc.getTitle());
+                }
+            	if (doc.getContents() != null) {
+            	    result.setContents(doc.getContents(), this.getUserId());
+            	}
 
             } else {
             	throw new LockExpired("No longer have write access.");

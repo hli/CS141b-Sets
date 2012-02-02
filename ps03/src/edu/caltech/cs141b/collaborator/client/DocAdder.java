@@ -36,7 +36,8 @@ public class DocAdder implements AsyncCallback<Document> {
 
     @Override
     public void onSuccess(Document result) {
-        chrome.add(result);
+        this.chrome.add(result);
+        this.chrome.show(result);
         new Notification("New document \"" + result.getTitle() + "\" made.").show();
         new DocLister(chrome).getDocuments();
     }

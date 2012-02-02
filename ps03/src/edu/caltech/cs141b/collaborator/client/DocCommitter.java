@@ -40,8 +40,10 @@ public class DocCommitter implements AsyncCallback<Document> {
 
     @Override
     public void onSuccess(Document result) {
+        
         this.editor.refresh(result);
-    	new Notification("Document \"" + result.getTitle() + "\" saved.").show();
+        new Notification("Document \"" + result.getTitle() + "\" saved.").show();
+        
     	GWT.log("Document " + result + " saved.");        
     }
 }

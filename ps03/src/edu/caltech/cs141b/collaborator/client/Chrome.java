@@ -89,10 +89,15 @@ public class Chrome extends Composite {
      *   Document to render in the editor.
      */
     public void add(Document document) {
-        DocumentTab t = new DocumentTab(document);
-        Editor e = new Editor(document, t);
-        this.editors.put(document.getKey(), e);
-        this.tabPanel.add(e, t);
+        if (!this.editors.containsKey(document.getKey()))
+        {
+            DocumentTab t = new DocumentTab(document);
+            Editor e = new Editor(document, t);
+            this.editors.put(document.getKey(), e);
+            this.tabPanel.add(e, t);
+        } else {
+            this.editors.get(document.getKey()).refresh(document);
+        }
     }
     
     /**
@@ -109,6 +114,26 @@ public class Chrome extends Composite {
         if (this.editors.containsKey(documentKey)) {
             this.tabPanel.remove(this.editors.get(documentKey));
             this.editors.remove(documentKey);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Show Document
+     * 
+     * Brings the given document to the front.
+     * 
+     * @param document
+     *   Document to show.
+     * @return
+     *   Returns whether the operation was successful.
+     */
+    public boolean show(Document document) {
+        if (this.editors.containsKey(document.getKey()))
+        {
+            this.tabPanel.selectTab(this.editors.get(document.getKey()));
             return true;
         } else {
             return false;

@@ -37,5 +37,6 @@ public class DocGetter implements AsyncCallback<Document> {
     @Override
     public void onSuccess(Document result) {
         this.chrome.add(result);
+        this.chrome.show(result);
     }
 }

@@ -4,18 +4,18 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import edu.caltech.cs141b.collaborator.common.Document;
+import edu.caltech.cs141b.collaborator.ui.Editor;
 import edu.caltech.cs141b.collaborator.ui.Notification;
-
 
 /**
  * Used in conjunction with <code>CollaboratorService.checkinDocument(String key)</code>.
  */
 public class DocCheckinner implements AsyncCallback<Document> {
 
-	private Chrome chrome;
+	private Editor editor;
 	
-    public DocCheckinner(Chrome chrome) {
-        this.chrome = chrome;
+    public DocCheckinner(Editor editor) {
+        this.editor = editor;
     }
 
     public void checkinDocument(Document doc) {
@@ -39,7 +39,7 @@ public class DocCheckinner implements AsyncCallback<Document> {
 
     @Override
     public void onSuccess(Document result) {
-        this.chrome.remove(result.getKey());
+        this.editor.refresh(result);
         new Notification("Document \"" + result.getTitle() + "\" checked in.").show();
     }
 }

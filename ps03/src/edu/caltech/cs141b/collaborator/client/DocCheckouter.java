@@ -3,6 +3,7 @@ package edu.caltech.cs141b.collaborator.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import edu.caltech.cs141b.collaborator.ui.Editor;
 import edu.caltech.cs141b.collaborator.ui.Notification;
 
 import edu.caltech.cs141b.collaborator.common.Document;
@@ -12,10 +13,10 @@ import edu.caltech.cs141b.collaborator.common.Document;
  */
 public class DocCheckouter implements AsyncCallback<Document> {
 
-	private Chrome chrome;
-	
-    public DocCheckouter(Chrome chrome) {
-        this.chrome = chrome;
+    private Editor editor;
+    
+    public DocCheckouter(Editor editor) {
+        this.editor = editor;
     }
 
     public void checkoutDocument(String key) {
@@ -39,7 +40,7 @@ public class DocCheckouter implements AsyncCallback<Document> {
 
     @Override
     public void onSuccess(Document result) {
-        chrome.add(result);
+        this.editor.refresh(result);
         new Notification("Document \"" + result.getTitle() + "\" checked out.").show();
     }
 }
