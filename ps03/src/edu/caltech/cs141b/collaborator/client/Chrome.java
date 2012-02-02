@@ -1,23 +1,19 @@
 package edu.caltech.cs141b.collaborator.client;
 
 import java.util.HashMap;
-import java.util.List;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 import edu.caltech.cs141b.collaborator.common.Document;
-import edu.caltech.cs141b.collaborator.common.DocumentHeader;
 import edu.caltech.cs141b.collaborator.ui.DocumentList;
 import edu.caltech.cs141b.collaborator.ui.DocumentTab;
 import edu.caltech.cs141b.collaborator.ui.Editor;
-import edu.caltech.cs141b.collaborator.ui.Notification;
 import edu.caltech.cs141b.collaborator.ui.Resources;
 import edu.caltech.cs141b.collaborator.ui.ToolbarButton;
 
@@ -75,8 +71,7 @@ public class Chrome extends Composite {
         
         // Setup the document list.
         this.documentList = new DocumentList();
-        new DocLister(this).getDocuments();
-        
+
         // Add a welcome tab.
         this.tabPanel.add(new Welcome(), "Welcome");
     }

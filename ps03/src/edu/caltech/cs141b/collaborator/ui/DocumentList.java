@@ -1,6 +1,5 @@
 package edu.caltech.cs141b.collaborator.ui;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.cell.client.AbstractCell;
@@ -146,7 +145,7 @@ public class DocumentList extends PopupPanel {
          * Class Constructor.
          */
         public DocumentHeaderCell() {
-            super("dblclick");
+            super("click");
         }
 
         /**
@@ -162,7 +161,7 @@ public class DocumentList extends PopupPanel {
             super.onBrowserEvent(context, parent, value, event, valueUpdater);
 
             // Handle the click event.
-            if ("dblclick".equals(event.getType())) {
+            if ("click".equals(event.getType())) {
                 // Ignore clicks that occur outside of the outermost element.
                 EventTarget eventTarget = event.getEventTarget();
                 if (parent.getFirstChildElement().isOrHasChild(
