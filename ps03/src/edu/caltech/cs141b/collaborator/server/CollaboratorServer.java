@@ -83,12 +83,17 @@ public class CollaboratorServer extends RemoteServiceServlet implements
 
     	PersistenceManager pm = PMF.get().getPersistenceManager();
     	Document doc = null;
+    	Date currentTime = new Date();
 
     	DocumentData result = pm.getObjectById(DocumentData.class,
     			KeyFactory.stringToKey(key));
 
+    	Boolean isLocked = result.getLockedUntil() != null && 
+    	        result.getLockedUntil().after(currentTime) &&
+                result.getLockedBy().equals(this.getUserId());
+    	
     	doc = new Document(result.getKey(), result.getTitle(),
-    			result.getContents(), false);
+    			result.getContents(), isLocked);
 
     	return doc;
     }

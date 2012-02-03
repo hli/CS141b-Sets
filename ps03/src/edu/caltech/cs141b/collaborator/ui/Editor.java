@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 
+import edu.caltech.cs141b.collaborator.client.CommentNumGetter;
 import edu.caltech.cs141b.collaborator.client.DocCheckinner;
 import edu.caltech.cs141b.collaborator.client.DocCheckouter;
 import edu.caltech.cs141b.collaborator.client.DocCommitter;
@@ -86,6 +87,9 @@ public class Editor extends ResizeComposite {
         
         // Update the document contents.
         this.textarea.setText(document.getContents());
+        
+        // Update comment count.
+        new CommentNumGetter(this.comments).getNumComments(this.document.getKey());
     }
     
     public Document getDocument() {
@@ -113,9 +117,10 @@ public class Editor extends ResizeComposite {
 
         Toolbar toolbar = new Toolbar();
         toolbar.add(Main.chrome.btnDocumentLibrary());
+        toolbar.add(this.btnRefresh);
+        toolbar.add(this.btnCheckin);
         toolbar.add(this.btnEditTitle);
         toolbar.add(this.btnCommit);
-        toolbar.add(this.btnCheckin);
         toolbar.add(this.btnComments);
         toolbar.add(this.btnRevisions);
         
@@ -127,7 +132,11 @@ public class Editor extends ResizeComposite {
                 "Refresh Document", new ClickHandler() { 
             public void onClick(ClickEvent event) {
                 
-                new DocGetter(Main.chrome).getDocument(Editor.this.document.getKey());
+                if (!Editor.this.document.isLocked()) {
+                    new DocGetter(Main.chrome).getDocument(Editor.this.document.getKey());
+                } else {
+                    new CommentNumGetter(Editor.this.comments).getNumComments(Editor.this.document.getKey());
+                }
                 
             }
         });

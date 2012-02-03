@@ -38,7 +38,6 @@ public class CommentLister implements AsyncCallback<List<Comment>> {
     @Override
     public void onSuccess(List<Comment> result) {
         this.commentList.getCommentData().updateRowData(this.range.getStart(), result);
-        //this.commentList.refresh(result);
         GWT.log("Got " + result.size() + " comments.");
     }
 }

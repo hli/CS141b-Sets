@@ -31,11 +31,17 @@ public class CommentNumGetter implements AsyncCallback<Integer> {
             new Notification(caught.getClass() + " Error: "
                     + caught.getMessage()).show();      
         }
-        GWT.log("Error getting document list.", caught);
+        GWT.log("Error getting comment list.", caught);
     }
 
     @Override
     public void onSuccess(Integer result) {
-        this.commentList.getComments().setRowCount(result);
+        if (this.commentList.getComments().getRowCount() < result)
+        {
+            Integer rows = this.commentList.getComments().getRowCount();
+            this.commentList.getCommentData().updateRowCount(result, true);
+            this.commentList.getComments().setVisibleRange(0, rows + Math.min(20, result - rows));
+        }
+        
     }
 }

@@ -44,7 +44,7 @@ public class CommentList extends Composite implements KeyPressHandler {
         
         // Create the cell list that holds the rest of the comments.
         this.comments = new CellList<Comment>(new CommentCell());
-        this.comments.setPageSize(20);
+        this.comments.setVisibleRange(0, 20);
         new CommentNumGetter(this).getNumComments(this.key);
         
         // Create data provider.
