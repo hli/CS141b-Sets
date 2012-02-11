@@ -1,9 +1,7 @@
 package edu.caltech.cs141b.hw2.gwt.collab.server;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 
@@ -29,14 +27,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class CollaboratorServiceImpl extends RemoteServiceServlet implements
         CollaboratorService {
 
-    private static final Logger log = Logger
-            .getLogger(CollaboratorServiceImpl.class.toString());
-    private static CollaboratorServer server;
-
-    public CollaboratorServiceImpl() {
-        super();
-        this.server = new CollaboratorServer(this);
-    }
+    private static CollaboratorServer server = new CollaboratorServer();
     
     @Override
     public List<DocumentMetadata> getDocumentList() {
@@ -60,7 +51,7 @@ public class CollaboratorServiceImpl extends RemoteServiceServlet implements
          * TODO: Call the CollaboratorServer.checkoutDocument() method and
          * transform Document to LockedDocument.
          */
-        Document doc = server.checkoutDocument(documentKey);
+        Document doc = server.checkoutDocument(this.getUserId(), documentKey);
         PersistenceManager pm = PMF.get().getPersistenceManager();
         DocumentData result = pm.getObjectById(DocumentData.class, 
                 KeyFactory.stringToKey(doc.getKey()));
@@ -90,8 +81,8 @@ public class CollaboratorServiceImpl extends RemoteServiceServlet implements
          */
         Document plainDoc = new Document(doc.getKey(), doc.getTitle(), 
                 doc.getContents(), true);
-        plainDoc = server.commitDocument(plainDoc);
-        server.checkinDocument(plainDoc);
+        plainDoc = server.commitDocument(this.getUserId(), plainDoc);
+        server.checkinDocument(this.getUserId(), plainDoc);
         
         return new UnlockedDocument(plainDoc.getKey(), plainDoc.getTitle(), 
                 plainDoc.getContents());
@@ -105,10 +96,11 @@ public class CollaboratorServiceImpl extends RemoteServiceServlet implements
          */
         Document plainDoc = new Document(doc.getKey(), doc.getTitle(),
                 doc.getContents(), true);
-        server.checkinDocument(plainDoc);
+        server.checkinDocument(this.getUserId(), plainDoc);
     }
-
-    public String getUserId() {
+    
+    // Get current user of the servlet.
+    private String getUserId() {
         return this.getThreadLocalRequest().getRemoteAddr();
     }
 }

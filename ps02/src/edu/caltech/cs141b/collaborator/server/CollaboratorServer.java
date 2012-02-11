@@ -3,7 +3,6 @@ package edu.caltech.cs141b.collaborator.server;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -16,41 +15,12 @@ import edu.caltech.cs141b.collaborator.common.Document;
 import edu.caltech.cs141b.collaborator.common.DocumentHeader;
 import edu.caltech.cs141b.collaborator.common.PMF;
 import edu.caltech.cs141b.collaborator.server.data.DocumentData;
-import edu.caltech.cs141b.collaborator.server.data.DocumentRevisionData;
-import edu.caltech.cs141b.hw2.gwt.collab.server.CollaboratorServiceImpl;
 import edu.caltech.cs141b.hw2.gwt.collab.shared.LockExpired;
 import edu.caltech.cs141b.hw2.gwt.collab.shared.LockUnavailable;
 
 public class CollaboratorServer {
-
-    private static final Logger log = Logger
-            .getLogger(CollaboratorServiceImpl.class.toString());
     
     private static final long DELTA = 60 * 60 * 1000;
-    
-    private CollaboratorServiceImpl servlet;
-    
-    /**
-     * Get User ID.
-     * 
-     * Gets a unique identifier for the current user.
-     * 
-     * @return
-     *   Current user identifier.
-     */
-    private String getUserId() {
-        return this.servlet.getUserId();
-    }
-    
-    /**
-     * Class Constructor.
-     * 
-     * @param servlet
-     *   Servlet that uses this server.
-     */
-    public CollaboratorServer(CollaboratorServiceImpl servlet) {
-        this.servlet = servlet;
-    }
     
     /**
      * Get list of document headers.
@@ -116,7 +86,7 @@ public class CollaboratorServer {
      * @throws LockUnavailable
      *    if another client has the lock
      */
-    public Document checkoutDocument(String key) throws LockUnavailable {
+    public Document checkoutDocument(String user, String key) throws LockUnavailable {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         Document doc = null;
@@ -131,11 +101,10 @@ public class CollaboratorServer {
     
                 if (result.getLockedUntil() == null ||
                         result.getLockedUntil().before(currentTime) ||
-                        result.getLockedBy().equals(this.getUserId())) {
+                        result.getLockedBy().equals(user)) {
                     doc = new Document(result.getKey(), result.getTitle(),
                             result.getContents(), true);
-                    result.lock(this.getUserId(), 
-                            new Date(currentTime.getTime() + DELTA));
+                    result.lock(user, new Date(currentTime.getTime() + DELTA));
                     pm.makePersistent(result);
                     
                     tx.commit();
@@ -165,7 +134,7 @@ public class CollaboratorServer {
      * @throws LockExpired
      *    if the client no longer has access to the document.
      */
-    public Document commitDocument(Document doc) throws LockExpired {
+    public Document commitDocument(String user, Document doc) throws LockExpired {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         DocumentData result = null;
@@ -177,17 +146,17 @@ public class CollaboratorServer {
             try {
                 if (doc.getKey() == null) {
                     
-                    result = this.newDocument(doc);
+                    result = this.newDocument(user, doc);
                     
                 } else {
                     
                     result = pm.getObjectById(DocumentData.class,
                             KeyFactory.stringToKey(doc.getKey()));
                     if (result.getLockedUntil().after(currentTime) &&
-                            result.getLockedBy().equals(this.getUserId())) {
+                            result.getLockedBy().equals(user)) {
                         
                         result.setTitle(doc.getTitle());
-                        result.setContents(doc.getContents(), this.getUserId());
+                        result.setContents(doc.getContents(), user);
                         
                     } else {
                         throw new LockExpired();
@@ -195,7 +164,7 @@ public class CollaboratorServer {
                     
                 }
             } catch (JDOObjectNotFoundException e) {
-                result = this.newDocument(doc);
+                result = this.newDocument(user, doc);
             }
 
             pm.makePersistent(result);
@@ -221,7 +190,7 @@ public class CollaboratorServer {
      * @throws LockExpired
      *    if the client no longer has access to the document.
      */
-    public void checkinDocument(Document doc) throws LockExpired {
+    public void checkinDocument(String user, Document doc) throws LockExpired {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         Date currentTime = new Date();
@@ -234,7 +203,7 @@ public class CollaboratorServer {
                         KeyFactory.stringToKey(doc.getKey()));
                 
                 if (result.getLockedUntil().after(currentTime) &&
-                        result.getLockedBy().equals(this.getUserId())) {
+                        result.getLockedBy().equals(user)) {
                     
                     result.unlock();
                     pm.makePersistent(result);
@@ -262,12 +231,12 @@ public class CollaboratorServer {
      *    new document
      * @return document
      */
-    private DocumentData newDocument(Document doc) {
+    private DocumentData newDocument(String user, Document doc) {
         
         Date currentTime = new Date();
         
         return new DocumentData(doc.getTitle(), 
-                doc.getContents(), this.getUserId(), this.getUserId(), 
+                doc.getContents(), user, user, 
                 new Date(currentTime.getTime() + DELTA));
     }
 }
