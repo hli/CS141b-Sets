@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
@@ -346,20 +345,15 @@ public class CollaboratorServer extends RemoteServiceServlet implements
     	
         List<DocumentRevision> revisions = new ArrayList<DocumentRevision>();
 
-        try {
-            DocumentData result = pm.getObjectById(DocumentData.class,
-                    KeyFactory.stringToKey(key));
-            
-            List<DocumentRevisionData> revisiondata = result.getRevisions();
-            if (!revisiondata.isEmpty()) {
-                for (DocumentRevisionData r : revisiondata) {
-                    revisions.add(new DocumentRevision(r.getKey(), r.getDocument().getTitle(), r.getContents(), r.getUpdatedTime(), r.getUpdatedBy()));
-                }
-            }
-            
-        } catch (JDOObjectNotFoundException e) {
-        }
+        DocumentData result = pm.getObjectById(DocumentData.class,
+                KeyFactory.stringToKey(key));
         
+        List<DocumentRevisionData> revisiondata = result.getRevisions();
+        if (!revisiondata.isEmpty()) {
+            for (DocumentRevisionData r : revisiondata) {
+                revisions.add(new DocumentRevision(r.getKey(), r.getDocument().getTitle(), r.getContents(), r.getUpdatedTime(), r.getUpdatedBy()));
+            }
+        }  
         return revisions;
     }
 }

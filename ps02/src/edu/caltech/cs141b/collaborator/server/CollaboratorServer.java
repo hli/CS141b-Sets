@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
@@ -63,14 +62,11 @@ public class CollaboratorServer {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Document doc = null;
 
-        try {
-            DocumentData result = pm.getObjectById(DocumentData.class,
-                    KeyFactory.stringToKey(key));
-            
-            doc = new Document(result.getKey(), result.getTitle(),
-                    result.getContents(), false);
-        } catch (JDOObjectNotFoundException e) {
-        }
+        DocumentData result = pm.getObjectById(DocumentData.class,
+                KeyFactory.stringToKey(key));
+        
+        doc = new Document(result.getKey(), result.getTitle(),
+                result.getContents(), false);
 
         return doc;
     }
@@ -95,25 +91,22 @@ public class CollaboratorServer {
         try {
             tx.begin();
             
-            try {
-                DocumentData result = pm.getObjectById(DocumentData.class,
-                        KeyFactory.stringToKey(key));
-    
-                if (result.getLockedUntil() == null ||
-                        result.getLockedUntil().before(currentTime) ||
-                        result.getLockedBy().equals(user)) {
-                    doc = new Document(result.getKey(), result.getTitle(),
-                            result.getContents(), true);
-                    result.lock(user, new Date(currentTime.getTime() + DELTA));
-                    pm.makePersistent(result);
-                    
-                    tx.commit();
-                } else {
-                    throw new LockUnavailable("Available at : " +  
-                         (new Date(currentTime.getTime() + DELTA)).toString());
-                }      
-            } catch (JDOObjectNotFoundException e) {
-            }
+            DocumentData result = pm.getObjectById(DocumentData.class,
+                    KeyFactory.stringToKey(key));
+
+            if (result.getLockedUntil() == null ||
+                    result.getLockedUntil().before(currentTime) ||
+                    result.getLockedBy().equals(user)) {
+                doc = new Document(result.getKey(), result.getTitle(),
+                        result.getContents(), true);
+                result.lock(user, new Date(currentTime.getTime() + DELTA));
+                pm.makePersistent(result);
+                
+                tx.commit();
+            } else {
+                throw new LockUnavailable("Available at : " +  
+                     (new Date(currentTime.getTime() + DELTA)).toString());
+            }      
             
         } finally {
             if (tx.isActive()) {
@@ -143,28 +136,23 @@ public class CollaboratorServer {
         try {
             tx.begin();
             
-            try {
-                if (doc.getKey() == null) {
+            if (doc.getKey() == null) {
+                
+                result = this.newDocument(user, doc);
+                
+            } else {
+                
+                result = pm.getObjectById(DocumentData.class,
+                        KeyFactory.stringToKey(doc.getKey()));
+                if (result.getLockedUntil().after(currentTime) &&
+                        result.getLockedBy().equals(user)) {
                     
-                    result = this.newDocument(user, doc);
+                    result.setTitle(doc.getTitle());
+                    result.setContents(doc.getContents(), user);
                     
                 } else {
-                    
-                    result = pm.getObjectById(DocumentData.class,
-                            KeyFactory.stringToKey(doc.getKey()));
-                    if (result.getLockedUntil().after(currentTime) &&
-                            result.getLockedBy().equals(user)) {
-                        
-                        result.setTitle(doc.getTitle());
-                        result.setContents(doc.getContents(), user);
-                        
-                    } else {
-                        throw new LockExpired();
-                    }
-                    
+                    throw new LockExpired();
                 }
-            } catch (JDOObjectNotFoundException e) {
-                result = this.newDocument(user, doc);
             }
 
             pm.makePersistent(result);
@@ -198,22 +186,18 @@ public class CollaboratorServer {
         try {
             tx.begin();
             
-            try {
-                DocumentData result = pm.getObjectById(DocumentData.class,
-                        KeyFactory.stringToKey(doc.getKey()));
+            DocumentData result = pm.getObjectById(DocumentData.class,
+                    KeyFactory.stringToKey(doc.getKey()));
+            
+            if (result.getLockedUntil().after(currentTime) &&
+                    result.getLockedBy().equals(user)) {
                 
-                if (result.getLockedUntil().after(currentTime) &&
-                        result.getLockedBy().equals(user)) {
-                    
-                    result.unlock();
-                    pm.makePersistent(result);
-                    
-                    tx.commit();
-                } else {
-                    throw new LockExpired();
-                }
-                    
-            } catch (JDOObjectNotFoundException e) {
+                result.unlock();
+                pm.makePersistent(result);
+                
+                tx.commit();
+            } else {
+                throw new LockExpired();
             }
         } finally {
             if (tx.isActive()) {
