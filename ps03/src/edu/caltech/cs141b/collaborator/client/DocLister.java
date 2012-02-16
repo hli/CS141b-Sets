@@ -34,14 +34,9 @@ public class DocLister implements AsyncCallback<List<DocumentHeader>> {
 
     @Override
     public void onSuccess(List<DocumentHeader> result) {
-        if (result == null || result.size() == 0) {
-            new Notification("No documents available.").show();
-        } 
-        else {
-        	this.documentList.refresh(result);
-        	this.documentList.show();
-            GWT.log("Got " + result.size() + " documents.");
-        }
+        this.documentList.refresh(result);
+        this.documentList.show();
+        GWT.log("Got " + result.size() + " documents.");
     }
 }
 
