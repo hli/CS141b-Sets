@@ -30,5 +30,7 @@ public class Main implements EntryPoint {
         RootLayoutPanel.get().add(Main.chrome);
         RootPanel.get("loading").setVisible(false);
 
+        // Initialize channel between server and client.
+        new ChannelCreator().createChannel();
     }
 }

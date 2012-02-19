@@ -113,4 +113,12 @@ public interface CollaboratorService extends RemoteService {
      *   A list of document revisions.
      */
     List<DocumentRevision> getRevisions(String key);
+    
+    /**
+     * Create channel and get channel token.
+     *
+     * @return
+     *   Channel token string.
+     */
+    String createChannel();
 }

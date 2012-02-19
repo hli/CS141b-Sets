@@ -142,4 +142,11 @@ public class Chrome extends ResizeComposite {
             }
         });
     }
+    
+    /**
+     * Accessor for editors.
+     */
+    public HashMap<String, Editor> getEditors() {
+        return this.editors;
+    }
 }

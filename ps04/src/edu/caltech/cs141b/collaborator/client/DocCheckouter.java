@@ -14,6 +14,10 @@ import edu.caltech.cs141b.collaborator.common.Document;
 public class DocCheckouter implements AsyncCallback<Document> {
 
     private Editor editor;
+
+    public DocCheckouter() {
+        this.editor = null;
+    }
     
     public DocCheckouter(Editor editor) {
         this.editor = editor;
@@ -40,7 +44,10 @@ public class DocCheckouter implements AsyncCallback<Document> {
 
     @Override
     public void onSuccess(Document result) {
-        this.editor.refresh(result);
-        new Notification("Document \"" + result.getTitle() + "\" checked out.").show();
+        if (result != null) {
+            if (this.editor != null)
+                this.editor.refresh(result);
+            new Notification("Document \"" + result.getTitle() + "\" checked out.").show();
+        }
     }
 }

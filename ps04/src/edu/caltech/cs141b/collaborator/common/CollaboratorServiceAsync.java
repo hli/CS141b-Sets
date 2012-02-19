@@ -28,4 +28,6 @@ public interface CollaboratorServiceAsync {
     void addComment(String key, String comment, AsyncCallback<Void> callback);
     
     void getRevisions(String key, AsyncCallback<List<DocumentRevision>> callback);
+    
+    void createChannel(AsyncCallback<String> callback);
 }
