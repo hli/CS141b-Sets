@@ -13,6 +13,7 @@
 
 	<!-- Other module inherits                                      -->
     <inherits name="com.google.gwt.resources.Resources" />
+    <inherits name='com.google.gwt.appengine.channel.Channel'/>
     
 	<!-- Specify the app entry point class.                         -->
     <entry-point
