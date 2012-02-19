@@ -57,8 +57,11 @@ public class ChannelCreator implements AsyncCallback<String>{
                                 
                             case UNAVAILABLE:
                                 new Notification("You are number " + Integer.toString(msgobj.getPosition()) + " in line to receive the lock.").show();
+                                break;
+                            
                             case EXPIRED:
                                 new DocExpiredRefresher(Main.chrome).getDocument(msgobj.getDocKey());
+                                break;
                         }
                     }
                     @Override
