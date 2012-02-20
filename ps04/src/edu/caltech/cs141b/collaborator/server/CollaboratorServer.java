@@ -155,11 +155,12 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         	    result.addToQueue(clientId);
         	    pm.makePersistent(result);
         	}
+        	String head = result.peekAtQueue();
 
         	if (result.getLockedUntil() == null ||
         			result.getLockedUntil().before(currentTime) ||
         			// If the top of the queue for the document is the user, give the user the document.
-        			result.peekAtQueue().equals(clientId)) {
+        			head.equals(clientId)) {
         		doc = new Document(result.getKey(), result.getTitle(),
         				result.getContents(), true);
         		result.lock(clientId, 
@@ -167,8 +168,8 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         		pm.makePersistent(result);
         		tx.commit();
         		
-        		taskqueue.add(withUrl("/Collaborator/tasks").
-                        param("doc", gson.toJson(doc)));
+        		//taskqueue.add(withUrl("/Collaborator/tasks").
+                //        param("doc", gson.toJson(doc)));
         	} else {
         	    Message msgobj = new Message();
         	    msgobj.setType(Message.MessageType.UNAVAILABLE);
