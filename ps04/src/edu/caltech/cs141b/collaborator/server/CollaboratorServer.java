@@ -275,6 +275,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
             //If there is a client in the queue, tell them that the document 
             //is now available to them.
             if(client != null){
+                result.peekAtQueue();
                 Message msgobj = new Message();
                 msgobj.setType(Message.MessageType.AVAILABLE);
                 msgobj.setDocKey(result.getKey());

@@ -25,26 +25,6 @@
     <url-pattern>/Collaborator/collab</url-pattern>
   </servlet-mapping>
   
-  <servlet>
-    <servlet-name>taskServlet</servlet-name>
-    <servlet-class>edu.caltech.cs141b.collaborator.server.TaskHandler</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>taskServlet</servlet-name>
-    <url-pattern>/Collaborator/tasks</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-    <servlet-name>channelServlet</servlet-name>
-    <servlet-class>edu.caltech.cs141b.collaborator.server.ChannelHandler</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>channelServlet</servlet-name>
-    <url-pattern>/_ah/channel/disconnected/</url-pattern>
-  </servlet-mapping>
-  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>Collaborator.html</welcome-file>

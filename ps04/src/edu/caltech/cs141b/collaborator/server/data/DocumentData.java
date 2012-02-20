@@ -2,8 +2,8 @@ package edu.caltech.cs141b.collaborator.server.data;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -38,7 +38,7 @@ public class DocumentData {
     private List<CommentData> comments = new ArrayList<CommentData>();
     
     @Persistent
-    private LinkedList<String> queue = new LinkedList<String>();
+    private Vector<String> queue = new Vector<String>();
 
     public DocumentData(String title, String contents, String updatedBy,
             String lockedBy, Date lockedUntil) {
@@ -112,11 +112,11 @@ public class DocumentData {
     }
     
     public void popFromQueue() {
-        this.queue.pop();
+        this.queue.remove(0);
     }
     
     public String peekAtQueue() {
-        return this.queue.peek();
+        return this.queue.firstElement();
     }
     
     public Boolean queueContains(String clientId) {
