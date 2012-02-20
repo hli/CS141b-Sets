@@ -2,6 +2,7 @@ package edu.caltech.cs141b.collaborator.server.data;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.jdo.annotations.Extension;
@@ -35,6 +36,9 @@ public class DocumentData {
     @Persistent(mappedBy = "document")
     @Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "commentTime asc"))
     private List<CommentData> comments = new ArrayList<CommentData>();
+    
+    @Persistent
+    private LinkedList<String> queue = new LinkedList<String>();
 
     public DocumentData(String title, String contents, String updatedBy,
             String lockedBy, Date lockedUntil) {
@@ -101,5 +105,25 @@ public class DocumentData {
     public void unlock() {
         this.lockedBy = null;
         this.lockedUntil = null;
+    }
+    
+    public void addToQueue(String clientId) {
+        this.queue.add(clientId);
+    }
+    
+    public void popFromQueue() {
+        this.queue.pop();
+    }
+    
+    public String peekAtQueue() {
+        return this.queue.peek();
+    }
+    
+    public Boolean queueContains(String clientId) {
+        return this.queue.contains(clientId);
+    }
+    
+    public Integer indexInQueue(String clientId) {
+        return this.queue.indexOf(clientId);
     }
 }

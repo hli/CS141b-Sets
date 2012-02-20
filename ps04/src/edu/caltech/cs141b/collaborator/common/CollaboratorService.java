@@ -27,7 +27,7 @@ public interface CollaboratorService extends RemoteService {
      * @return 
      *   An unlocked Document object.
      */
-    Document getDocument(String key);
+    Document getDocument(String key, String clientId);
     
     /**
      * Checkout (lock) an existing document.
@@ -39,7 +39,7 @@ public interface CollaboratorService extends RemoteService {
      * @throws LockUnavailable
      *   If a lock cannot be obtained
      */
-    Document checkoutDocument(String key) throws LockUnavailable;
+    Document checkoutDocument(String key, String clientId) throws LockUnavailable;
 
     /**
      * Save the locked document.
@@ -51,7 +51,7 @@ public interface CollaboratorService extends RemoteService {
      * @throws LockExpired
      *   If the lock given to the document has expired.
      */
-    Document commitDocument(Document doc) throws LockExpired;
+    Document commitDocument(Document doc, String clientId) throws LockExpired;
 
     /**
      * Check in (unlock) a locked document.
@@ -61,7 +61,7 @@ public interface CollaboratorService extends RemoteService {
      * @throws LockExpired
      *   If the lock given to the document has expired.
      */
-    Document checkinDocument(Document doc) throws LockExpired;
+    Document checkinDocument(Document doc, String clientId) throws LockExpired;
     
     /**
      * Creates new document.
@@ -72,7 +72,7 @@ public interface CollaboratorService extends RemoteService {
      *    new document
      * @return document
      */
-    Document newDocument(Document doc);
+    Document newDocument(Document doc, String clientId);
     
     /**
      * Get comments for document.
@@ -120,5 +120,5 @@ public interface CollaboratorService extends RemoteService {
      * @return
      *   Channel token string.
      */
-    String createChannel();
+    String createChannel(String clientId);
 }

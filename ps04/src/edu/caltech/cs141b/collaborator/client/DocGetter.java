@@ -18,8 +18,8 @@ public class DocGetter implements AsyncCallback<Document> {
         this.chrome = chrome;
     }
 
-    public void getDocument(String key) {
-        Main.service.getDocument(key, this);
+    public void getDocument(String key, String clientId) {
+        Main.service.getDocument(key, clientId, this);
     }
 
     @Override

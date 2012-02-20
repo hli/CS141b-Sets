@@ -21,6 +21,10 @@
     <include path="**.cache.*" expiration="365d" />
     <exclude path="**.gwt.rpc" />
   </static-files>
+  
+  <inbound-services>
+    <service>channel_presence</service>
+  </inbound-services>
 
   <!-- Configure java.util.logging -->
   <system-properties>

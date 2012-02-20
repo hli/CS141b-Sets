@@ -133,7 +133,7 @@ public class Editor extends ResizeComposite {
             public void onClick(ClickEvent event) {
                 
                 if (!Editor.this.document.isLocked()) {
-                    new DocGetter(Main.chrome).getDocument(Editor.this.document.getKey());
+                    new DocGetter(Main.chrome).getDocument(Editor.this.document.getKey(), Main.clientId);
                 } else {
                     new CommentNumGetter(Editor.this.comments).getNumComments(Editor.this.document.getKey());
                 }
@@ -146,7 +146,7 @@ public class Editor extends ResizeComposite {
                 "Lock Document", new ClickHandler() {
             public void onClick(ClickEvent event) {
                 
-                new DocCheckouter(Editor.this).checkoutDocument(Editor.this.document.getKey());
+                new DocCheckouter(Editor.this).checkoutDocument(Editor.this.document.getKey(), Main.clientId);
                 Editor.this.textarea.setEnabled(true);
                 
             }
@@ -166,7 +166,7 @@ public class Editor extends ResizeComposite {
                         .show();
             } else if (name != null) {
                 Editor.this.document.setTitle(name);
-                new DocCommitter(Editor.this).commitDocument(Editor.this.document);
+                new DocCommitter(Editor.this).commitDocument(Editor.this.document, Main.clientId);
             }
 
         }
@@ -178,7 +178,7 @@ public class Editor extends ResizeComposite {
             public void onClick(ClickEvent event) {
                 if (!Editor.this.textarea.getText().equals(Editor.this.document.getContents())) {
                     Editor.this.document.setContents(Editor.this.textarea.getText());
-                    new DocCommitter(Editor.this).commitDocument(Editor.this.document);
+                    new DocCommitter(Editor.this).commitDocument(Editor.this.document, Main.clientId);
                 }
             }
         });
@@ -188,7 +188,7 @@ public class Editor extends ResizeComposite {
                 "Unlock Document", new ClickHandler() {
             public void onClick(ClickEvent event) {
                 
-                new DocCheckinner(Editor.this).checkinDocument(Editor.this.document);
+                new DocCheckinner(Editor.this).checkinDocument(Editor.this.document, Main.clientId);
                 Editor.this.textarea.setEnabled(false);
             }
         });

@@ -2,6 +2,7 @@ package edu.caltech.cs141b.collaborator.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -21,6 +22,8 @@ public class Main implements EntryPoint {
     public static final CollaboratorServiceAsync service = GWT
             .create(CollaboratorService.class);
     
+    public static String clientId = Integer.toString(Random.nextInt());
+    
     public void onModuleLoad() {
         
         // Add the default chrome contents.
@@ -31,6 +34,6 @@ public class Main implements EntryPoint {
         RootPanel.get("loading").setVisible(false);
 
         // Initialize channel between server and client.
-        new ChannelCreator().createChannel();
+        new ChannelCreator().createChannel(clientId);
     }
 }

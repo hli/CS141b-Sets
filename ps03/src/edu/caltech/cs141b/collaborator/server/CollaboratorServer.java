@@ -132,7 +132,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         		tx.commit();
         	} else {
         		throw new LockUnavailable("Document unavailable.  Try again at : " +  
-        				(new Date(currentTime.getTime() + DELTA)).toString());
+        				result.getLockedUntil().toString());
         	}      
 
         } finally {

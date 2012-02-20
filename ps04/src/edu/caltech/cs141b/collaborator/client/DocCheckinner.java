@@ -18,8 +18,8 @@ public class DocCheckinner implements AsyncCallback<Document> {
         this.editor = editor;
     }
 
-    public void checkinDocument(Document doc) {
-        Main.service.checkinDocument(doc, this);
+    public void checkinDocument(Document doc, String clientId) {
+        Main.service.checkinDocument(doc, clientId, this);
     }
 
     @Override

@@ -106,7 +106,7 @@ public class DocumentList extends PopupPanel {
                         new Notification("Please enter a valid document title.")
                                 .show();
                     } else if (name != null) {
-                        new DocAdder(Main.chrome).newDocument(new Document(null, name, "", true));
+                        new DocAdder(Main.chrome).newDocument(new Document(null, name, "", true), Main.clientId);
                         DocumentList.this.hide();
                     }
 
@@ -148,7 +148,7 @@ public class DocumentList extends PopupPanel {
                 EventTarget eventTarget = event.getEventTarget();
                 if (parent.getFirstChildElement().isOrHasChild(
                         Element.as(eventTarget))) {
-                    new DocGetter(Main.chrome).getDocument(value.getKey());
+                    new DocGetter(Main.chrome).getDocument(value.getKey(), Main.clientId);
                     DocumentList.this.hide();
                 }
             }

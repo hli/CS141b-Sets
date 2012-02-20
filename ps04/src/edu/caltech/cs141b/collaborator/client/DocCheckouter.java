@@ -23,8 +23,8 @@ public class DocCheckouter implements AsyncCallback<Document> {
         this.editor = editor;
     }
 
-    public void checkoutDocument(String key) {
-        Main.service.checkoutDocument(key, this);
+    public void checkoutDocument(String key, String clientId) {
+        Main.service.checkoutDocument(key, clientId, this);
     }
 
     @Override

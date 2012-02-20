@@ -12,6 +12,7 @@ import com.google.gwt.appengine.channel.client.SocketListener;
 import edu.caltech.cs141b.collaborator.common.Message;
 import edu.caltech.cs141b.collaborator.ui.Editor;
 import edu.caltech.cs141b.collaborator.ui.Notification;
+import edu.caltech.cs141b.collaborator.client.Main;
 
 
 /**
@@ -19,8 +20,8 @@ import edu.caltech.cs141b.collaborator.ui.Notification;
  */
 public class ChannelCreator implements AsyncCallback<String>{
 	
-	public void createChannel() {
-		Main.service.createChannel(this);
+	public void createChannel(String clientId) {
+		Main.service.createChannel(clientId, this);
 	}
 	
     @Override
@@ -50,9 +51,9 @@ public class ChannelCreator implements AsyncCallback<String>{
                             case AVAILABLE:
                                 Editor editor = Main.chrome.getEditors().get(msgobj.getDocKey());
                                 if (editor == null)
-                                    new DocCheckouter().checkoutDocument(msgobj.getDocKey());
+                                    new DocCheckouter().checkoutDocument(msgobj.getDocKey(), Main.clientId);
                                 else
-                                    new DocCheckouter(editor).checkoutDocument(msgobj.getDocKey());
+                                    new DocCheckouter(editor).checkoutDocument(msgobj.getDocKey(), Main.clientId);
                                 break;
                                 
                             case UNAVAILABLE:
@@ -60,7 +61,7 @@ public class ChannelCreator implements AsyncCallback<String>{
                                 break;
                             
                             case EXPIRED:
-                                new DocExpiredRefresher(Main.chrome).getDocument(msgobj.getDocKey());
+                                new DocExpiredRefresher(Main.chrome).getDocument(msgobj.getDocKey(), Main.clientId);
                                 break;
                         }
                     }

@@ -2,13 +2,22 @@ package edu.caltech.cs141b.collaborator.server;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
+import com.google.appengine.api.channel.ChannelMessage;
+import com.google.appengine.api.channel.ChannelService;
+import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.Queue;
+import static com.google.appengine.api.taskqueue.TaskOptions.Builder.*;
+import com.google.gson.Gson;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import edu.caltech.cs141b.collaborator.common.CollaboratorService;
@@ -18,6 +27,7 @@ import edu.caltech.cs141b.collaborator.common.DocumentHeader;
 import edu.caltech.cs141b.collaborator.common.DocumentRevision;
 import edu.caltech.cs141b.collaborator.common.LockExpired;
 import edu.caltech.cs141b.collaborator.common.LockUnavailable;
+import edu.caltech.cs141b.collaborator.common.Message;
 import edu.caltech.cs141b.collaborator.common.PMF;
 import edu.caltech.cs141b.collaborator.server.data.CommentData;
 import edu.caltech.cs141b.collaborator.server.data.DocumentData;
@@ -27,8 +37,15 @@ import edu.caltech.cs141b.collaborator.server.data.DocumentRevisionData;
 @SuppressWarnings("serial")
 public class CollaboratorServer extends RemoteServiceServlet implements
     CollaboratorService {
-    
+        
     private static final long DELTA = 60 * 60 * 1000;
+    
+    private static ChannelService channelService = ChannelServiceFactory.getChannelService();
+    private static Queue taskqueue = QueueFactory.getDefaultQueue();
+    
+    private static Gson gson = new Gson();
+    
+    private static List<String> clientIds = new ArrayList<String>();
     
     /**
      * Get User ID.
@@ -38,8 +55,22 @@ public class CollaboratorServer extends RemoteServiceServlet implements
      * @return
      *   Current user identifier.
      */
-    private String getUserId() {
-        return this.getThreadLocalRequest().getUserPrincipal().getName();
+    
+    private String getClientSignature() {
+        return this.getThreadLocalRequest().getUserPrincipal().getName(); 
+    }
+    
+//    private String getClientId() {
+//        Date currentTime = new Date();
+//        return this.clientId + currentTime.toString();
+//    }
+    
+    public String createChannel(String clientId) {
+    	
+    	String token = channelService.createChannel(clientId);
+    	clientIds.add(clientId);
+    	
+    	return token;	
     }
     
     /**
@@ -78,7 +109,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
      *    document key
      * @return document
      */
-    public Document getDocument(String key) {
+    public Document getDocument(String key, String clientId) {
 
     	PersistenceManager pm = PMF.get().getPersistenceManager();
     	Document doc = null;
@@ -89,7 +120,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
 
     	Boolean isLocked = result.getLockedUntil() != null && 
     	        result.getLockedUntil().after(currentTime) &&
-                result.getLockedBy().equals(this.getUserId());
+                result.getLockedBy().equals(clientId);
     	
     	doc = new Document(result.getKey(), result.getTitle(),
     			result.getContents(), isLocked);
@@ -108,7 +139,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
      * @throws LockUnavailable
      *    if another client has the lock
      */
-    public Document checkoutDocument(String key) throws LockUnavailable {
+    public Document checkoutDocument(String key, String clientId) throws LockUnavailable {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         Document doc = null;
@@ -119,20 +150,34 @@ public class CollaboratorServer extends RemoteServiceServlet implements
 
         	DocumentData result = pm.getObjectById(DocumentData.class,
         			KeyFactory.stringToKey(key));
+        	
+        	if(!result.queueContains(clientId)) {
+        	    result.addToQueue(clientId);
+        	    pm.makePersistent(result);
+        	}
 
         	if (result.getLockedUntil() == null ||
         			result.getLockedUntil().before(currentTime) ||
-        			result.getLockedBy().equals(this.getUserId())) {
+        			// If the top of the queue for the document is the user, give the user the document.
+        			result.peekAtQueue().equals(clientId)) {
         		doc = new Document(result.getKey(), result.getTitle(),
         				result.getContents(), true);
-        		result.lock(this.getUserId(), 
-        				new Date(currentTime.getTime() + DELTA));
+        		result.lock(clientId, 
+        		        new Date(currentTime.getTime() + DELTA));
         		pm.makePersistent(result);
-
         		tx.commit();
+        		
+        		taskqueue.add(withUrl("/Collaborator/tasks").
+                        param("doc", gson.toJson(doc)));
         	} else {
-        		throw new LockUnavailable("Document unavailable.  Try again at : " +  
-        				(new Date(currentTime.getTime() + DELTA)).toString());
+        	    Message msgobj = new Message();
+        	    msgobj.setType(Message.MessageType.UNAVAILABLE);
+        	    msgobj.setDocKey(result.getKey());
+        	    msgobj.setPosition(result.indexInQueue(clientId));
+        	    
+        	    String msgstr = gson.toJson(msgobj);
+        		channelService.sendMessage(
+        		        new ChannelMessage(clientId, msgstr));
         	}      
 
         } finally {
@@ -154,7 +199,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
      * @throws LockExpired
      *    if the client no longer has access to the document.
      */
-    public Document commitDocument(Document doc) throws LockExpired {
+    public Document commitDocument(Document doc, String clientId) throws LockExpired {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         DocumentData result = null;
@@ -166,13 +211,13 @@ public class CollaboratorServer extends RemoteServiceServlet implements
             result = pm.getObjectById(DocumentData.class,
             		KeyFactory.stringToKey(doc.getKey()));
             if (result.getLockedUntil().after(currentTime) &&
-            		result.getLockedBy().equals(this.getUserId())) {
+            		result.getLockedBy().equals(clientId)) {
 
                 if (doc.getTitle() != null) {
                     result.setTitle(doc.getTitle());
                 }
             	if (doc.getContents() != null) {
-            	    result.setContents(doc.getContents(), this.getUserId());
+            	    result.setContents(doc.getContents(), clientId);
             	}
 
             } else {
@@ -202,7 +247,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
      * @throws LockExpired
      *    if the client no longer has access to the document.
      */
-    public Document checkinDocument(Document doc) throws LockExpired {
+    public Document checkinDocument(Document doc, String clientId) throws LockExpired {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         Date currentTime = new Date();
@@ -215,15 +260,28 @@ public class CollaboratorServer extends RemoteServiceServlet implements
             		KeyFactory.stringToKey(doc.getKey()));
 
             if (result.getLockedUntil().after(currentTime) &&
-            		result.getLockedBy().equals(this.getUserId())) {
+            		result.getLockedBy().equals(clientId)) {
 
             	result.unlock();
-            	pm.makePersistent(result);
-
-            	tx.commit();
-            } else {
-            	throw new LockExpired("No longer have write access.");
+            	
             }
+            
+            result.popFromQueue();
+            pm.makePersistent(result);
+            
+            String client = result.peekAtQueue();
+
+            //If there is a client in the queue, tell them that the document 
+            //is now available to them.
+            if(client != null){
+                Message msgobj = new Message();
+                msgobj.setType(Message.MessageType.AVAILABLE);
+                msgobj.setDocKey(result.getKey());
+                String msgstr = gson.toJson(msgobj);
+                channelService.sendMessage(
+                        new ChannelMessage(client, msgstr));
+            }
+            tx.commit();
 
         } finally {
             if (tx.isActive()) {
@@ -243,7 +301,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
      *    new document
      * @return document
      */
-    public Document newDocument(Document doc) {
+    public Document newDocument(Document doc, String clientId) {
     	PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         DocumentData result = null;
@@ -253,8 +311,9 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         	tx.begin();
 
         	result = new DocumentData(doc.getTitle(), 
-        			doc.getContents(), this.getUserId(), this.getUserId(), 
+        			doc.getContents(), clientId, clientId, 
         			new Date(currentTime.getTime() + DELTA));
+        	result.addToQueue(clientId);
             pm.makePersistent(result);
             tx.commit();
             
@@ -263,7 +322,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
                 tx.rollback();
             }
         }
-
+        
         return new Document(result.getKey(), result.getTitle(), 
                 result.getContents(), true);
     }
@@ -322,7 +381,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         	tx.begin();
         	DocumentData result = pm.getObjectById(DocumentData.class,
         			KeyFactory.stringToKey(key));
-        	result.addComment(comment, this.getUserId());
+        	result.addComment(comment, this.getClientSignature());
             pm.makePersistent(result);
             tx.commit();
         } finally {

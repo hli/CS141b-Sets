@@ -18,8 +18,8 @@ public class DocAdder implements AsyncCallback<Document> {
         this.chrome = chrome;
     }
 
-    public void newDocument(Document doc) {
-        Main.service.newDocument(doc, this);
+    public void newDocument(Document doc, String clientId) {
+        Main.service.newDocument(doc, clientId, this);
     }
 
     @Override

@@ -19,8 +19,8 @@ public class DocCommitter implements AsyncCallback<Document> {
         this.editor = editor;
     }
 
-    public void commitDocument(Document doc) {
-        Main.service.commitDocument(doc, this);
+    public void commitDocument(Document doc, String clientId) {
+        Main.service.commitDocument(doc, clientId, this);
     }
 
     @Override

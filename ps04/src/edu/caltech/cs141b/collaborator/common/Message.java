@@ -9,12 +9,13 @@ public class Message extends JavaScriptObject {
 
     private MessageType type = null;
     private String docKey = null;
+    private int position = -1;
     
     public final native MessageType getType() /*-{ 
         return this.type;
     }-*/;
     
-    public final native void setFirstName(MessageType value) /*-{
+    public final native void setType(MessageType value) /*-{
         this.type = value;
     }-*/;
     
@@ -29,4 +30,13 @@ public class Message extends JavaScriptObject {
     public static final native Message buildMessage(String json) /*-{
         return eval('(' + json + ')');
     }-*/;
+    
+    public final native int getPosition() /*-{
+        return this.position;
+    }-*/;
+    
+    public final native void setPosition(int position) /*-{
+        this.position = position;
+    }-*/;
+
 }
