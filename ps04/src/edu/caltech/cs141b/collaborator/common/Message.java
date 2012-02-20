@@ -3,6 +3,8 @@ package edu.caltech.cs141b.collaborator.common;
 import com.google.gwt.core.client.JavaScriptObject;
 
 public class Message extends JavaScriptObject {
+    protected Message() {}
+    
     public enum MessageType {
         AVAILABLE, UNAVAILABLE, EXPIRED
     }
@@ -27,16 +29,16 @@ public class Message extends JavaScriptObject {
         this.docKey = value;
     }-*/;
     
-    public static final native Message buildMessage(String json) /*-{
-        return eval('(' + json + ')');
-    }-*/;
-    
     public final native int getPosition() /*-{
         return this.position;
     }-*/;
     
     public final native void setPosition(int position) /*-{
         this.position = position;
+    }-*/;
+    
+    public static final native Message buildMessage(String json) /*-{
+        return eval('(' + json + ')');
     }-*/;
 
 }

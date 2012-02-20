@@ -171,14 +171,10 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         		//taskqueue.add(withUrl("/Collaborator/tasks").
                 //        param("doc", gson.toJson(doc)));
         	} else {
-        	    Message msgobj = new Message();
-        	    msgobj.setType(Message.MessageType.UNAVAILABLE);
-        	    msgobj.setDocKey(result.getKey());
-        	    msgobj.setPosition(result.indexInQueue(clientId));
-        	    
-        	    String msgstr = gson.toJson(msgobj);
+        	  
         		channelService.sendMessage(
-        		        new ChannelMessage(clientId, msgstr));
+        		        new ChannelMessage(clientId, "{MessageType:" + Message.MessageType.UNAVAILABLE
+        		                + ",docKey:" + result.getKey() + "position:" + result.indexInQueue(clientId) + "}"));
         	}      
 
         } finally {
@@ -269,19 +265,13 @@ public class CollaboratorServer extends RemoteServiceServlet implements
             
             result.popFromQueue();
             pm.makePersistent(result);
-            
-            String client = result.peekAtQueue();
 
             //If there is a client in the queue, tell them that the document 
             //is now available to them.
-            if(client != null){
-                result.peekAtQueue();
-                Message msgobj = new Message();
-                msgobj.setType(Message.MessageType.AVAILABLE);
-                msgobj.setDocKey(result.getKey());
-                String msgstr = gson.toJson(msgobj);
+            if(!result.queueIsEmpty()){
                 channelService.sendMessage(
-                        new ChannelMessage(client, msgstr));
+                        new ChannelMessage(result.peekAtQueue(), "{MessageType:" + Message.MessageType.AVAILABLE
+                                + ",docKey:" + result.getKey() + "position:" + "}"));
             }
             tx.commit();
 

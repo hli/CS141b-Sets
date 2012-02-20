@@ -126,4 +126,8 @@ public class DocumentData {
     public Integer indexInQueue(String clientId) {
         return this.queue.indexOf(clientId);
     }
+    
+    public Boolean queueIsEmpty() {
+        return this.queue.isEmpty();
+    }
 }

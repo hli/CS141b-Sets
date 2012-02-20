@@ -44,7 +44,6 @@ public class ChannelCreator implements AsyncCallback<String>{
                     }
                     @Override
                     public void onMessage(String msgstr) {
-                        Window.alert("Received: " + msgstr);
                         Message msgobj = Message.buildMessage(msgstr);
                         
                         switch (msgobj.getType()) {
