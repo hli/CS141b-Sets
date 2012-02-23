@@ -166,7 +166,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         		result.lock(clientId, 
         		        new Date(currentTime.getTime() + DELTA));
         		pm.makePersistent(result);
-        		tx.commit();
+        		
         		
         		//taskqueue.add(withUrl("/Collaborator/tasks").
                 //        param("doc", gson.toJson(doc)));
@@ -176,7 +176,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         		channelService.sendMessage(
         		        new ChannelMessage(clientId, msgstr));
         	}      
-
+        	tx.commit();
         } finally {
             if (tx.isActive()) {
                 tx.rollback();
