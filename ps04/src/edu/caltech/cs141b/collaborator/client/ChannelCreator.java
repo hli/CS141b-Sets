@@ -44,7 +44,7 @@ public class ChannelCreator implements AsyncCallback<String>{
                     }
                     @Override
                     public void onMessage(String msgstr) {
-                        Message msgobj = Message.buildMessage(msgstr);
+                        Message msgobj = Message.fromJson(msgstr);
                         
                         switch (msgobj.getType()) {
                             case AVAILABLE:

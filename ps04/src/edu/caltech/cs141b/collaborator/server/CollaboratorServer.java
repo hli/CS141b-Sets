@@ -171,10 +171,10 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         		//taskqueue.add(withUrl("/Collaborator/tasks").
                 //        param("doc", gson.toJson(doc)));
         	} else {
-        	  
+        	    Message msgobj = new Message(Message.MessageType.UNAVAILABLE, result.getKey(), result.indexInQueue(clientId));
+                String msgstr = gson.toJson(msgobj);
         		channelService.sendMessage(
-        		        new ChannelMessage(clientId, "{MessageType:" + Message.MessageType.UNAVAILABLE
-        		                + ",docKey:" + result.getKey() + "position:" + result.indexInQueue(clientId) + "}"));
+        		        new ChannelMessage(clientId, msgstr));
         	}      
 
         } finally {
@@ -268,10 +268,10 @@ public class CollaboratorServer extends RemoteServiceServlet implements
 
             //If there is a client in the queue, tell them that the document 
             //is now available to them.
-            if(!result.queueIsEmpty()){
+            if (!result.queueIsEmpty()) {
+                Message msgobj = new Message(Message.MessageType.AVAILABLE, result.getKey(), -1);
                 channelService.sendMessage(
-                        new ChannelMessage(result.peekAtQueue(), "{MessageType:" + Message.MessageType.AVAILABLE
-                                + ",docKey:" + result.getKey() + "position:" + "}"));
+                        new ChannelMessage(result.peekAtQueue(), gson.toJson(msgobj)));
             }
             tx.commit();
 
