@@ -410,7 +410,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         return revisions;
     }
     
-    public void handleExpire(String key, String clientId, TaskHandle task) {
+    public void handleExpire(String key, String clientId, String task) {
         taskqueue.deleteTask(task);
         if (clientIds.contains(clientId)) {
             Message msgobj = new Message(Message.MessageType.EXPIRED, key, -1);
