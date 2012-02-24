@@ -115,6 +115,10 @@ public class DocumentData {
         this.queue.remove(0);
     }
     
+    public void removeFromQueue(String clientId) {
+        this.queue.remove(clientId);
+    }
+    
     public String peekAtQueue() {
         return this.queue.firstElement();
     }

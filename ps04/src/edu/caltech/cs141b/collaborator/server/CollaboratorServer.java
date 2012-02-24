@@ -16,6 +16,8 @@ import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.TaskHandle;
+
 import static com.google.appengine.api.taskqueue.TaskOptions.Builder.*;
 import com.google.gson.Gson;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -168,8 +170,8 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         		pm.makePersistent(result);
         		
         		
-        		//taskqueue.add(withUrl("/Collaborator/tasks").
-                //        param("doc", gson.toJson(doc)));
+        		taskqueue.add(withUrl("/Collaborator/tasks").
+                        param("doc", gson.toJson(doc)));
         	} else {
         	    Message msgobj = new Message(Message.MessageType.UNAVAILABLE, result.getKey(), result.indexInQueue(clientId));
                 String msgstr = gson.toJson(msgobj);
@@ -244,7 +246,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
      * @throws LockExpired
      *    if the client no longer has access to the document.
      */
-    public Document checkinDocument(Document doc, String clientId) throws LockExpired {
+    public Document checkinDocument(Document doc, String clientId) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         Date currentTime = new Date();
@@ -407,5 +409,37 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         }  
         return revisions;
     }
-}
+    
+    public void handleExpire(String key, String clientId, TaskHandle task) {
+        taskqueue.deleteTask(task);
+        if (clientIds.contains(clientId)) {
+            Message msgobj = new Message(Message.MessageType.EXPIRED, key, -1);
+            channelService.sendMessage(
+                    new ChannelMessage(clientId, gson.toJson(msgobj)));
+            Document doc = this.getDocument(key, clientId);
+            this.checkinDocument(doc, clientId);
+        }
+    }
+    
+    public void handleDisconnection(String key, String clientId) {
+        clientIds.remove(clientId);
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        Query query = pm.newQuery(DocumentData.class);
 
+        try {
+            List<DocumentData> results = (List<DocumentData>) query.execute();
+            if (!results.isEmpty()) {
+                for (DocumentData d : results) {
+                    d.removeFromQueue(clientId);
+                }
+            }
+        } finally {
+            query.closeAll();
+        }
+        Message msgobj = new Message(Message.MessageType.EXPIRED, key, -1);
+        channelService.sendMessage(
+                new ChannelMessage(clientId, gson.toJson(msgobj)));
+        Document doc = this.getDocument(key, clientId);
+        this.checkinDocument(doc, clientId);
+    }
+}
