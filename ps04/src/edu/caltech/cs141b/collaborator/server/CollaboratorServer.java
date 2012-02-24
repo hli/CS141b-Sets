@@ -14,6 +14,7 @@ import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.labs.taskqueue.TaskOptions.Method;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.TaskHandle;
@@ -171,11 +172,11 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         		
         		
         		taskqueue.add(withUrl("/Collaborator/tasks").
-                        param("doc", gson.toJson(doc)));
+                        param("docKey", result.getKey()).param("cliendId", clientId));
         	} else {
         	    Message msgobj = new Message(Message.MessageType.UNAVAILABLE, result.getKey(), result.indexInQueue(clientId));
                 String msgstr = gson.toJson(msgobj);
-        		channelService.sendMessage(
+                channelService.sendMessage(
         		        new ChannelMessage(clientId, msgstr));
         	}      
         	tx.commit();
@@ -410,8 +411,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         return revisions;
     }
     
-    public void handleExpire(String key, String clientId, TaskHandle task) {
-        taskqueue.deleteTask(task);
+    public void handleExpire(String key, String clientId) {
         if (clientIds.contains(clientId)) {
             Message msgobj = new Message(Message.MessageType.EXPIRED, key, -1);
             channelService.sendMessage(
