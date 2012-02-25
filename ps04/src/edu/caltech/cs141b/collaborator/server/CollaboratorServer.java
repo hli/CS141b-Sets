@@ -14,6 +14,7 @@ import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.taskqueue.TaskOptions.Method;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.TaskHandle;
@@ -171,11 +172,11 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         		
         		
         		taskqueue.add(withUrl("/Collaborator/tasks").
-                        param("doc", gson.toJson(doc)));
+                        param("docKey", result.getKey()).param("cliendId", clientId).method(Method.GET));
         	} else {
         	    Message msgobj = new Message(Message.MessageType.UNAVAILABLE, result.getKey(), result.indexInQueue(clientId));
                 String msgstr = gson.toJson(msgobj);
-        		channelService.sendMessage(
+                channelService.sendMessage(
         		        new ChannelMessage(clientId, msgstr));
         	}      
         	tx.commit();
@@ -421,7 +422,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         }
     }
     
-    public void handleDisconnection(String key, String clientId) {
+    public void handleDisconnection(String clientId) {
         clientIds.remove(clientId);
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Query query = pm.newQuery(DocumentData.class);
@@ -436,10 +437,14 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         } finally {
             query.closeAll();
         }
-        Message msgobj = new Message(Message.MessageType.EXPIRED, key, -1);
+        Message msgobj = new Message(Message.MessageType.EXPIRED, null, -1);
         channelService.sendMessage(
                 new ChannelMessage(clientId, gson.toJson(msgobj)));
-        Document doc = this.getDocument(key, clientId);
-        this.checkinDocument(doc, clientId);
+    }
+
+    @Override
+    public void handleDisconnection(String docKey, String clientId) {
+        // TODO Auto-generated method stub
+        
     }
 }
