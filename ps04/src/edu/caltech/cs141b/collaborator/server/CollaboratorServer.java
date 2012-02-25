@@ -170,7 +170,6 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         		        new Date(currentTime.getTime() + DELTA));
         		pm.makePersistent(result);
         		
-        		
         		taskqueue.add(withUrl("/Collaborator/tasks").
                         param("docKey", result.getKey()).param("clientId", clientId).method(Method.POST).countdownMillis(DELTA));
         	} else {

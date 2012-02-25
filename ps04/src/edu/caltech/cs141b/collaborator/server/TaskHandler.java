@@ -14,7 +14,7 @@ import edu.caltech.cs141b.collaborator.common.CollaboratorService;
 public class TaskHandler extends HttpServlet {
 
     private static CollaboratorService rpcService = (CollaboratorService) SyncProxy.newProxyInstance(CollaboratorService.class,
-                  "http://localhost/Collaborator", "collab");
+                  "http://localhost:8888/Collaborator", "collab");
     
     public void doPost(HttpServletRequest req, HttpServletResponse resp) {
         String docKey = req.getParameter("docKey");
