@@ -124,5 +124,5 @@ public interface CollaboratorService extends RemoteService {
     
     void handleExpire(String key, String clientId, String task);
 
-    void handleDisconnection(String docKey, String clientId);
+    void handleDisconnection(String clientId);
 }

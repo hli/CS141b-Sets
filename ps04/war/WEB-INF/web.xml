@@ -35,6 +35,16 @@
     <url-pattern>/Collaborator/tasks</url-pattern>
   </servlet-mapping>
   
+    <servlet>
+    <servlet-name>disconnectServlet</servlet-name>
+    <servlet-class>edu.caltech.cs141b.collaborator.server.DisconnectHandler</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>disconnectServlet</servlet-name>
+    <url-pattern>/_ah/channel/disconnected</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>Collaborator.html</welcome-file>

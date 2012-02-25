@@ -41,7 +41,7 @@ import edu.caltech.cs141b.collaborator.server.data.DocumentRevisionData;
 public class CollaboratorServer extends RemoteServiceServlet implements
     CollaboratorService {
         
-    private static final long DELTA = 60 * 60 * 1000;
+    private static final long DELTA = 60000;
     
     private static ChannelService channelService = ChannelServiceFactory.getChannelService();
     private static Queue taskqueue = QueueFactory.getDefaultQueue();
@@ -172,7 +172,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         		
         		
         		taskqueue.add(withUrl("/Collaborator/tasks").
-                        param("docKey", result.getKey()).param("cliendId", clientId).method(Method.GET));
+                        param("docKey", result.getKey()).param("cliendId", clientId).method(Method.POST).countdownMillis(DELTA));
         	} else {
         	    Message msgobj = new Message(Message.MessageType.UNAVAILABLE, result.getKey(), result.indexInQueue(clientId));
                 String msgstr = gson.toJson(msgobj);
@@ -440,11 +440,5 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         Message msgobj = new Message(Message.MessageType.EXPIRED, null, -1);
         channelService.sendMessage(
                 new ChannelMessage(clientId, gson.toJson(msgobj)));
-    }
-
-    @Override
-    public void handleDisconnection(String docKey, String clientId) {
-        // TODO Auto-generated method stub
-        
     }
 }
