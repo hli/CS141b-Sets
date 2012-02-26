@@ -2,6 +2,7 @@ package edu.caltech.cs141b.collaborator.server;
 
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
@@ -22,6 +23,8 @@ import edu.caltech.cs141b.collaborator.server.data.DocumentData;
 @SuppressWarnings("serial")
 public class TaskHandler extends HttpServlet {
     
+    private static final Logger log = Logger.getLogger(TaskHandler.class.getName());
+
     public void doPost(HttpServletRequest req, HttpServletResponse resp) {
         String docKey = req.getParameter("docKey");
         String clientId = req.getParameter("clientId");
@@ -43,7 +46,8 @@ public class TaskHandler extends HttpServlet {
                 
                 result = pm.getObjectById(DocumentData.class,
                         KeyFactory.stringToKey(key));
-
+                log.info("LockedBy: " + result.getLockedBy());
+                log.info("LockedUnitl: " + result.getLockedUntil());
                 if (result.getLockedBy().equals(clientId) && result.getLockedUntil().before(currentTime) && !result.queueIsEmpty()) {
                     Message msgobj = new Message(Message.MessageType.EXPIRED, key, -1);
                     channelService.sendMessage(

@@ -450,11 +450,8 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         } finally {
             query.closeAll();
         }
-        Boolean isLocked = false;
-        if (result.getLockedBy() == null)
-            isLocked = true;
         Document returnDoc = new Document(result.getKey(), result.getTitle(), 
-                result.getContents(), isLocked);
+                result.getContents(), false);
         return returnDoc;
     }
 }
