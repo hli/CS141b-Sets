@@ -18,7 +18,6 @@ import com.google.appengine.api.taskqueue.Queue;
 
 import static com.google.appengine.api.taskqueue.TaskOptions.Builder.*;
 import com.google.gson.Gson;
-import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import edu.caltech.cs141b.collaborator.common.CollaboratorService;

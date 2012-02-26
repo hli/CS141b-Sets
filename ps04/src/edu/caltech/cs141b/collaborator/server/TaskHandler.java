@@ -1,6 +1,5 @@
 package edu.caltech.cs141b.collaborator.server;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -14,8 +13,6 @@ import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gson.Gson;
 
-import edu.caltech.cs141b.collaborator.common.Document;
-import edu.caltech.cs141b.collaborator.common.LockExpired;
 import edu.caltech.cs141b.collaborator.common.Message;
 import edu.caltech.cs141b.collaborator.common.PMF;
 import edu.caltech.cs141b.collaborator.server.CollaboratorServer;
@@ -49,7 +46,7 @@ public class TaskHandler extends HttpServlet {
                 result = pm.getObjectById(DocumentData.class,
                         KeyFactory.stringToKey(key));
 
-                if (result.getLockedBy().equals(clientId)) {
+                if (result.getLockedBy().equals(clientId) && !result.queueIsEmpty()) {
                     result.popFromQueue();
                     pm.makePersistent(result);
     
