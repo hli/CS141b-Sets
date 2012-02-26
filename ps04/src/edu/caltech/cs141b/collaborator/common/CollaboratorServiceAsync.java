@@ -30,9 +30,4 @@ public interface CollaboratorServiceAsync {
     void getRevisions(String key, AsyncCallback<List<DocumentRevision>> callback);
     
     void createChannel(String clientId, AsyncCallback<String> callback);
-    
-    void handleExpire(String key, String clientId, String task, AsyncCallback<Void> callback);
-    
-    void handleDisconnection(String clientId, AsyncCallback<Void> callback);
-
 }

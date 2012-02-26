@@ -9,6 +9,5 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gson-2.1-sources.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gson-2.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwtprojsonserializer-1.0.4a.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/SyncProxy.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

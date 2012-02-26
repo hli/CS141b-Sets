@@ -121,8 +121,4 @@ public interface CollaboratorService extends RemoteService {
      *   Channel token string.
      */
     String createChannel(String clientId);
-    
-    void handleExpire(String key, String clientId, String task);
-
-    void handleDisconnection(String clientId);
 }

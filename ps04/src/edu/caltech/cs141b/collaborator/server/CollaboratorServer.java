@@ -2,8 +2,6 @@ package edu.caltech.cs141b.collaborator.server;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -17,10 +15,10 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.taskqueue.TaskOptions.Method;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.TaskHandle;
 
 import static com.google.appengine.api.taskqueue.TaskOptions.Builder.*;
 import com.google.gson.Gson;
+import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import edu.caltech.cs141b.collaborator.common.CollaboratorService;
@@ -63,13 +61,15 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         return this.getThreadLocalRequest().getUserPrincipal().getName(); 
     }
     
-//    private String getClientId() {
-//        Date currentTime = new Date();
-//        return this.clientId + currentTime.toString();
-//    }
+    public static ChannelService getChannelService() {
+        return channelService;
+    }
+    
+    public static List<String> getClientIds() {
+        return clientIds;
+    }
     
     public String createChannel(String clientId) {
-    	
     	String token = channelService.createChannel(clientId);
     	clientIds.add(clientId);
     	
@@ -311,6 +311,8 @@ public class CollaboratorServer extends RemoteServiceServlet implements
             pm.makePersistent(result);
             tx.commit();
             
+            taskqueue.add(withUrl("/Collaborator/tasks").
+                    param("docKey", result.getKey()).param("clientId", clientId).method(Method.POST).countdownMillis(DELTA));
         } finally {
             if (tx.isActive()) {
                 tx.rollback();
@@ -408,36 +410,5 @@ public class CollaboratorServer extends RemoteServiceServlet implements
             }
         }  
         return revisions;
-    }
-    
-    public void handleExpire(String key, String clientId, String task) {
-        taskqueue.deleteTask(task);
-        if (clientIds.contains(clientId)) {
-            Message msgobj = new Message(Message.MessageType.EXPIRED, key, -1);
-            channelService.sendMessage(
-                    new ChannelMessage(clientId, gson.toJson(msgobj)));
-            Document doc = this.getDocument(key, clientId);
-            this.checkinDocument(doc, clientId);
-        }
-    }
-    
-    public void handleDisconnection(String clientId) {
-        clientIds.remove(clientId);
-        PersistenceManager pm = PMF.get().getPersistenceManager();
-        Query query = pm.newQuery(DocumentData.class);
-
-        try {
-            List<DocumentData> results = (List<DocumentData>) query.execute();
-            if (!results.isEmpty()) {
-                for (DocumentData d : results) {
-                    d.removeFromQueue(clientId);
-                }
-            }
-        } finally {
-            query.closeAll();
-        }
-        Message msgobj = new Message(Message.MessageType.EXPIRED, null, -1);
-        channelService.sendMessage(
-                new ChannelMessage(clientId, gson.toJson(msgobj)));
     }
 }
