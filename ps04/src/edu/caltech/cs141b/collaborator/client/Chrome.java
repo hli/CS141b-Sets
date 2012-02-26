@@ -144,6 +144,20 @@ public class Chrome extends ResizeComposite {
     }
     
     /**
+     * Simulate Toolbar Button.
+     */
+    public ToolbarButton btnSimulate() {
+        return new ToolbarButton(new Image(Resources.INSTANCE.simulate()),
+            "Simulate", new ClickHandler() {
+            public void onClick(ClickEvent event) {
+            
+                new DocLister(Chrome.this.documentList).getDocuments();
+            
+            }
+        });
+    }
+    
+    /**
      * Accessor for editors.
      */
     public HashMap<String, Editor> getEditors() {

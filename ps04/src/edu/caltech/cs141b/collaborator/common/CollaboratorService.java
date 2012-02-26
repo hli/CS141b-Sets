@@ -121,4 +121,12 @@ public interface CollaboratorService extends RemoteService {
      *   Channel token string.
      */
     String createChannel(String clientId);
+    
+    /**
+     * Creates or finds pre-existing simulation document.
+     *
+     * @return
+     *   Key of simulation document.
+     */
+    String simulate();
 }

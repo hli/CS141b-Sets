@@ -27,6 +27,7 @@ public class Welcome extends Composite {
         // Setup toolbars.
         Toolbar toolbar = new Toolbar();
         toolbar.add(Main.chrome.btnDocumentLibrary());
+        toolbar.add(Main.chrome.btnSimulate());
         panel.addNorth(toolbar, 50);
 
         // Construct the welcome message.

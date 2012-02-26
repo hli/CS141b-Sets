@@ -15,6 +15,9 @@ public interface Resources extends ClientBundle {
     @Source("archive.png")
     ImageResource documents();
     
+    @Source("simulate.png")
+    ImageResource simulate();
+    
     @Source("document.png")
     ImageResource newDocument();
     
