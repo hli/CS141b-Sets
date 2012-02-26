@@ -412,4 +412,37 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         }  
         return revisions;
     }
+    
+    public String simulate() {
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        Transaction tx = pm.currentTransaction();
+        DocumentData result;
+
+        Query query = pm.newQuery(DocumentData.class);
+        query.setFilter("isSimulate == true");
+        
+        try {
+            List<DocumentData> results = (List<DocumentData>) query.execute();
+            if (!results.isEmpty()) {
+                result = results.get(0);
+            } else {
+                try {
+                    tx.begin();
+                    
+                    result = new DocumentData("Simulation Document", "Simulating...", null, null, null);
+                    result.setSimulate();
+                    pm.makePersistent(result);
+                    tx.commit();
+                    
+                } finally {
+                    if (tx.isActive()) {
+                        tx.rollback();
+                    }
+                }
+            }
+        } finally {
+            query.closeAll();
+        }
+        return result.getKey();
+    }
 }

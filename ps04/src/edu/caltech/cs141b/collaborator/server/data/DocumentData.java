@@ -49,6 +49,7 @@ public class DocumentData {
         this.revisions.add(new DocumentRevisionData(contents, updatedBy));
         this.lockedBy = lockedBy;
         this.lockedUntil = lockedUntil;
+        this.isSimulate = false;
     }
 
     public String getKey() {
