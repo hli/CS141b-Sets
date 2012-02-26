@@ -42,7 +42,7 @@
   
   <servlet-mapping>
     <servlet-name>disconnectServlet</servlet-name>
-    <url-pattern>/_ah/channel/disconnected</url-pattern>
+    <url-pattern>/_ah/channel/disconnected/</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->

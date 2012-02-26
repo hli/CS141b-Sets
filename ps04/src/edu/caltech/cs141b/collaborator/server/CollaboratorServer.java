@@ -73,7 +73,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
     	String token = channelService.createChannel(clientId);
     	clientIds.add(clientId);
     	
-    	return token;	
+    	return token;
     }
     
     /**

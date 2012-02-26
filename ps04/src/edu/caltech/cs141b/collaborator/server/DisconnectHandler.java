@@ -2,6 +2,7 @@ package edu.caltech.cs141b.collaborator.server;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -24,8 +25,11 @@ import edu.caltech.cs141b.collaborator.server.CollaboratorServer;
 import edu.caltech.cs141b.collaborator.server.data.DocumentData;
 
 public class DisconnectHandler extends HttpServlet {
+    private static final Logger log = Logger.getLogger(DisconnectHandler.class.getName());
 
     public void doPost(HttpServletRequest req, HttpServletResponse resp) {
+        log.info("An informational message. SHOOOOOOOOOOOOT");
+        
         ChannelService channelService = CollaboratorServer.getChannelService();
         ChannelPresence presence;
         try {
