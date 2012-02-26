@@ -28,6 +28,9 @@ public class DocumentData {
 
     @Persistent
     private Date lockedUntil;
+    
+    @Persistent
+    private Boolean isSimulate;
 
     @Persistent(mappedBy = "document")
     @Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "updatedTime desc"))
@@ -133,5 +136,9 @@ public class DocumentData {
     
     public Boolean queueIsEmpty() {
         return this.queue.isEmpty();
+    }
+    
+    public void setSimulate() {
+        this.isSimulate = true;
     }
 }
