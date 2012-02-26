@@ -167,7 +167,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         			head.equals(clientId)) {
         		doc = new Document(result.getKey(), result.getTitle(),
         				result.getContents(), true);
-        		if (result.getSimulate() == true) {
+        		if (result.getSimulate()) {
         		    doc.setSimulate();
         		}
         		result.lock(clientId, 
@@ -288,7 +288,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         }
         Document returnDoc = new Document(result.getKey(), result.getTitle(), 
                 result.getContents(), false);
-        if (result.getSimulate() == true) {
+        if (result.getSimulate()) {
             returnDoc.setSimulate();
         }
         return returnDoc;
@@ -451,7 +451,8 @@ public class CollaboratorServer extends RemoteServiceServlet implements
             query.closeAll();
         }
         Boolean isLocked = false;
-        if (result.getLockedBy() == null) isLocked = true;
+        if (result.getLockedBy() == null)
+            isLocked = true;
         Document returnDoc = new Document(result.getKey(), result.getTitle(), 
                 result.getContents(), isLocked);
         return returnDoc;
