@@ -65,7 +65,7 @@ public class DocCheckinner implements AsyncCallback<Document> {
                     }
                 }
             };
-            t.schedule(randomGenerator.nextInt(15000));
+            t.schedule(randomGenerator.nextInt(Main.thinkTime));
         }
     }
 }

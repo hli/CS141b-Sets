@@ -46,7 +46,7 @@ public class Simulator implements AsyncCallback<Document> {
                 new DocCheckouter(editor).checkoutDocument(doc.getKey(), Main.clientId);
             }
         };
-        t.schedule(randomGenerator.nextInt(15000));
+        t.schedule(randomGenerator.nextInt(Main.thinkTime));
         
     }
 }

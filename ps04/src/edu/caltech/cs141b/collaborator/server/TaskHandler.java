@@ -1,5 +1,6 @@
 package edu.caltech.cs141b.collaborator.server;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -34,19 +35,19 @@ public class TaskHandler extends HttpServlet {
         DocumentData result = null;
         ChannelService channelService = CollaboratorServer.getChannelService();
         List<String> clientIds = CollaboratorServer.getClientIds();
+        Date currentTime = new Date();
         
         if (clientIds.contains(clientId)) {
-            Message msgobj = new Message(Message.MessageType.EXPIRED, key, -1);
-            channelService.sendMessage(
-                    new ChannelMessage(clientId, gson.toJson(msgobj)));
-
             try {
                 tx.begin();
                 
                 result = pm.getObjectById(DocumentData.class,
                         KeyFactory.stringToKey(key));
 
-                if (result.getLockedBy().equals(clientId) && !result.queueIsEmpty()) {
+                if (result.getLockedBy().equals(clientId) && result.getLockedUntil().before(currentTime) && !result.queueIsEmpty()) {
+                    Message msgobj = new Message(Message.MessageType.EXPIRED, key, -1);
+                    channelService.sendMessage(
+                            new ChannelMessage(clientId, gson.toJson(msgobj)));
                     result.popFromQueue();
                     pm.makePersistent(result);
     

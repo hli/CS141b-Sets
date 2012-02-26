@@ -22,6 +22,10 @@ public class Main implements EntryPoint {
     public static final CollaboratorServiceAsync service = GWT
             .create(CollaboratorService.class);
     
+    public static final int mealTime = 1000;
+    
+    public static final int thinkTime = 1000;
+    
     public static String clientId = Integer.toString(Random.nextInt());
     
     public void onModuleLoad() {
