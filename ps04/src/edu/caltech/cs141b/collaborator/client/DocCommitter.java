@@ -1,6 +1,9 @@
 package edu.caltech.cs141b.collaborator.client;
 
+import java.util.Random;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import edu.caltech.cs141b.collaborator.ui.Notification;
@@ -47,8 +50,16 @@ public class DocCommitter implements AsyncCallback<Document> {
         if (this.editor != null)
             this.editor.refresh(result);
         new Notification("Document \"" + result.getTitle() + "\" saved.").show();
+    	GWT.log("Document " + result + " saved.");
         
-    	GWT.log("Document " + result + " saved.");        
+    	//If it's in the simulation, we are still eating.
+        if (result.getSimulate()) {
+            if (this.editor != null) {
+                new DocCheckinner(this.editor).checkinDocument(result, Main.clientId);
+            } else {
+                new DocCheckinner().checkinDocument(result, Main.clientId);
+            }
+        }
     }
 }
 

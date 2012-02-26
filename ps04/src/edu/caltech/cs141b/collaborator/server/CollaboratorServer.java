@@ -3,6 +3,7 @@ package edu.caltech.cs141b.collaborator.server;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -155,7 +156,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         	DocumentData result = pm.getObjectById(DocumentData.class,
         			KeyFactory.stringToKey(key));
         	
-        	if(!result.queueContains(clientId)) {
+        	if (!result.queueContains(clientId)) {
         	    result.addToQueue(clientId);
         	    pm.makePersistent(result);
         	}
@@ -191,7 +192,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         
         return doc;
     }
-
+    private static final Logger log = Logger.getLogger(CollaboratorServer.class.getName());
     /**
      * Stores document changes.
      * 
@@ -213,6 +214,8 @@ public class CollaboratorServer extends RemoteServiceServlet implements
                
             result = pm.getObjectById(DocumentData.class,
             		KeyFactory.stringToKey(doc.getKey()));
+            log.info("LockedBy12: " + result.getLockedBy());
+            log.info("LockedUnitl12: " + result.getLockedUntil());
             if (result.getLockedUntil().after(currentTime) &&
             		result.getLockedBy().equals(clientId)) {
 
@@ -236,9 +239,13 @@ public class CollaboratorServer extends RemoteServiceServlet implements
                 tx.rollback();
             }
         }
-
-        return new Document(result.getKey(), result.getTitle(), 
+        
+        Document returnDoc = new Document(result.getKey(), result.getTitle(), 
                 result.getContents(), true);
+        if (result.getSimulate()) {
+            returnDoc.setSimulate();
+        }
+        return returnDoc;
     }
 
     /**
@@ -266,21 +273,20 @@ public class CollaboratorServer extends RemoteServiceServlet implements
             		result.getLockedBy().equals(clientId)) {
 
             	result.unlock();
-            	
+                result.popFromQueue();
+                pm.makePersistent(result);
+                tx.commit();
+                
+                //If there is a client in the queue, tell them that the document 
+                //is now available to them.
+                if (!result.queueIsEmpty()) {
+                    Message msgobj = new Message(Message.MessageType.AVAILABLE, result.getKey(), -1);
+                    channelService.sendMessage(
+                            new ChannelMessage(result.peekAtQueue(), gson.toJson(msgobj)));
+                }	
+            } else {
+                tx.commit();
             }
-            
-            result.popFromQueue();
-            pm.makePersistent(result);
-
-            //If there is a client in the queue, tell them that the document 
-            //is now available to them.
-            if (!result.queueIsEmpty()) {
-                Message msgobj = new Message(Message.MessageType.AVAILABLE, result.getKey(), -1);
-                channelService.sendMessage(
-                        new ChannelMessage(result.peekAtQueue(), gson.toJson(msgobj)));
-            }
-            tx.commit();
-
         } finally {
             if (tx.isActive()) {
                 tx.rollback();

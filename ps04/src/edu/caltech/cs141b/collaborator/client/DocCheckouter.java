@@ -58,14 +58,12 @@ public class DocCheckouter implements AsyncCallback<Document> {
                 Random randomGenerator = new Random();
                 Timer t = new Timer() {;
                     public void run() {
+                        doc.setContents(doc.getContents() + "\n" + Main.clientId);
                         if (editor != null) {
-                            doc.setContents(doc.getContents() + "\n" + Main.clientId);
                             new DocCommitter(editor).commitDocument(doc, Main.clientId);
-                            new DocCheckinner(editor).checkinDocument(doc, Main.clientId);
                         }
                         else {
                             new DocCommitter().commitDocument(doc, Main.clientId);
-                            new DocCheckinner().checkinDocument(doc, Main.clientId);
                         }
                     }
                 };

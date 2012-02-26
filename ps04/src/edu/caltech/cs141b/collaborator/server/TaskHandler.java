@@ -48,7 +48,10 @@ public class TaskHandler extends HttpServlet {
                         KeyFactory.stringToKey(key));
                 log.info("LockedBy: " + result.getLockedBy());
                 log.info("LockedUnitl: " + result.getLockedUntil());
-                if (result.getLockedBy().equals(clientId) && result.getLockedUntil().before(currentTime) && !result.queueIsEmpty()) {
+                if (result.getLockedUntil() != null 
+                        && result.getLockedBy().equals(clientId) 
+                        && result.getLockedUntil().before(currentTime) 
+                        && !result.queueIsEmpty()) {
                     Message msgobj = new Message(Message.MessageType.EXPIRED, key, -1);
                     channelService.sendMessage(
                             new ChannelMessage(clientId, gson.toJson(msgobj)));
