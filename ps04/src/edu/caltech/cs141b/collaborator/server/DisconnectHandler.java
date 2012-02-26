@@ -10,9 +10,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelPresence;
 import com.google.appengine.api.channel.ChannelService;
+import com.google.gson.Gson;
 
+import edu.caltech.cs141b.collaborator.common.Message;
 import edu.caltech.cs141b.collaborator.common.PMF;
 import edu.caltech.cs141b.collaborator.server.CollaboratorServer;
 import edu.caltech.cs141b.collaborator.server.data.DocumentData;
@@ -33,10 +36,14 @@ public class DisconnectHandler extends HttpServlet {
     }
     
     public void handleDisconnection(String clientId) {
-        List<String> clientIds = CollaboratorServer.getClientIds(); 
-        clientIds.remove(clientId);
+        Gson gson = new Gson();
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
+        ChannelService channelService = CollaboratorServer.getChannelService();
+        
+        List<String> clientIds = CollaboratorServer.getClientIds(); 
+        clientIds.remove(clientId);
+        
         Query query = pm.newQuery(DocumentData.class);
 
         try {
@@ -45,7 +52,15 @@ public class DisconnectHandler extends HttpServlet {
                 try {
                     for (DocumentData d : results) {
                         tx.begin();
-                        d.removeFromQueue(clientId);
+                        if (!d.queueIsEmpty() && d.peekAtQueue().equals(clientId)) {
+                            d.popFromQueue();
+                            Message msgobj = new Message(Message.MessageType.AVAILABLE, d.getKey(), -1);
+                            channelService.sendMessage(
+                                    new ChannelMessage(d.peekAtQueue(), gson.toJson(msgobj)));
+                        }
+                        else {
+                            d.removeFromQueue(clientId);
+                        }
                         pm.makePersistent(d);
                         tx.commit();
                     }
