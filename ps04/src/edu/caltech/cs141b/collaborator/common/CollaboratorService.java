@@ -126,7 +126,7 @@ public interface CollaboratorService extends RemoteService {
      * Creates or finds pre-existing simulation document.
      *
      * @return
-     *   Key of simulation document.
+     *   Simulation document.
      */
-    String simulate();
+    Document simulate();
 }

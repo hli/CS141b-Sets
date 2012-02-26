@@ -15,6 +15,10 @@ public class DocCommitter implements AsyncCallback<Document> {
 
 	private Editor editor;
 	
+    public DocCommitter() {
+        this.editor = null;
+    }
+	
     public DocCommitter(Editor editor) {
         this.editor = editor;
     }
@@ -40,8 +44,8 @@ public class DocCommitter implements AsyncCallback<Document> {
 
     @Override
     public void onSuccess(Document result) {
-        
-        this.editor.refresh(result);
+        if (this.editor != null)
+            this.editor.refresh(result);
         new Notification("Document \"" + result.getTitle() + "\" saved.").show();
         
     	GWT.log("Document " + result + " saved.");        

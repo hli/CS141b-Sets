@@ -138,6 +138,10 @@ public class DocumentData {
     public Boolean queueIsEmpty() {
         return this.queue.isEmpty();
     }
+
+    public Boolean getSimulate() {
+        return this.isSimulate;
+    }
     
     public void setSimulate() {
         this.isSimulate = true;

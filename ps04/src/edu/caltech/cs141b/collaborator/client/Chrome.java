@@ -147,11 +147,12 @@ public class Chrome extends ResizeComposite {
      * Simulate Toolbar Button.
      */
     public ToolbarButton btnSimulate() {
+        final Chrome chromium = this;
         return new ToolbarButton(new Image(Resources.INSTANCE.simulate()),
             "Simulate", new ClickHandler() {
             public void onClick(ClickEvent event) {
-            
-                new DocLister(Chrome.this.documentList).getDocuments();
+                
+                new Simulator(chromium).simulate();
             
             }
         });

@@ -8,6 +8,7 @@ public class Document implements IsSerializable {
     private String title = null;
     private String contents = null;
     private Boolean locked = null;
+    private Boolean isSimulate = null;
 
     // Required by GWT serialization.
     public Document() {
@@ -19,6 +20,7 @@ public class Document implements IsSerializable {
         this.title = title;
         this.contents = contents;
         this.locked = locked;
+        this.isSimulate = false;
     }
 
     public String getKey() {
@@ -51,5 +53,13 @@ public class Document implements IsSerializable {
 
     public Boolean isLocked() {
         return this.locked;
+    }
+    
+    public Boolean getSimulate() {
+        return this.isSimulate;
+    }
+    
+    public void setSimulate() {
+        this.isSimulate = true;
     }
 }

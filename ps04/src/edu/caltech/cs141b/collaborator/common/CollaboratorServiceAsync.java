@@ -31,5 +31,5 @@ public interface CollaboratorServiceAsync {
     
     void createChannel(String clientId, AsyncCallback<String> callback);
     
-    void simulate(AsyncCallback<String> callback);
+    void simulate(AsyncCallback<Document> callback);
 }

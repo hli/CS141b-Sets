@@ -1,6 +1,9 @@
 package edu.caltech.cs141b.collaborator.client;
 
+import java.util.Random;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import edu.caltech.cs141b.collaborator.common.Document;
@@ -13,6 +16,10 @@ import edu.caltech.cs141b.collaborator.ui.Notification;
 public class DocCheckinner implements AsyncCallback<Document> {
 
 	private Editor editor;
+	
+	public DocCheckinner() {
+	    this.editor = null;
+	}
 	
     public DocCheckinner(Editor editor) {
         this.editor = editor;
@@ -39,8 +46,27 @@ public class DocCheckinner implements AsyncCallback<Document> {
 
     @Override
     public void onSuccess(Document result) {
-        this.editor.refresh(result);
+        if (this.editor != null) {
+            this.editor.refresh(result);
+        }
         new Notification("Document \"" + result.getTitle() + "\" checked in.").show();
+        // If it's in the simulation, here is where we think and then get hungry.
+        if (result.getSimulate()) {
+            final Document doc = result;
+            final Editor editor = this.editor;
+            Random randomGenerator = new Random();
+            Timer t = new Timer() {;
+                public void run() {
+                    if (editor != null) {
+                        new DocCheckouter(editor).checkoutDocument(doc.getKey(), Main.clientId);
+                    }
+                    else {
+                        new DocCheckouter().checkoutDocument(doc.getKey(), Main.clientId);
+                    }
+                }
+            };
+            t.schedule(randomGenerator.nextInt(15000));
+        }
     }
 }
 

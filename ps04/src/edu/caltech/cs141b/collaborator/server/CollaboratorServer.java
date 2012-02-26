@@ -38,7 +38,7 @@ import edu.caltech.cs141b.collaborator.server.data.DocumentRevisionData;
 public class CollaboratorServer extends RemoteServiceServlet implements
     CollaboratorService {
         
-    private static final long DELTA = 15000;
+    private static final long DELTA = 60000;
     
     private static ChannelService channelService = ChannelServiceFactory.getChannelService();
     private static Queue taskqueue = QueueFactory.getDefaultQueue();
@@ -167,6 +167,9 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         			head.equals(clientId)) {
         		doc = new Document(result.getKey(), result.getTitle(),
         				result.getContents(), true);
+        		if (result.getSimulate() == true) {
+        		    doc.setSimulate();
+        		}
         		result.lock(clientId, 
         		        new Date(currentTime.getTime() + DELTA));
         		pm.makePersistent(result);
@@ -283,8 +286,12 @@ public class CollaboratorServer extends RemoteServiceServlet implements
                 tx.rollback();
             }
         }
-        return new Document(result.getKey(), result.getTitle(), 
+        Document returnDoc = new Document(result.getKey(), result.getTitle(), 
                 result.getContents(), false);
+        if (result.getSimulate() == true) {
+            returnDoc.setSimulate();
+        }
+        return returnDoc;
     }
     
     /**
@@ -413,7 +420,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         return revisions;
     }
     
-    public String simulate() {
+    public Document simulate() {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         DocumentData result;
@@ -443,6 +450,10 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         } finally {
             query.closeAll();
         }
-        return result.getKey();
+        Boolean isLocked = false;
+        if (result.getLockedBy() == null) isLocked = true;
+        Document returnDoc = new Document(result.getKey(), result.getTitle(), 
+                result.getContents(), isLocked);
+        return returnDoc;
     }
 }
