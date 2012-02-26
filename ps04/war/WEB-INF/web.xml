@@ -35,7 +35,7 @@
     <url-pattern>/Collaborator/tasks</url-pattern>
   </servlet-mapping>
   
-    <servlet>
+  <servlet>
     <servlet-name>disconnectServlet</servlet-name>
     <servlet-class>edu.caltech.cs141b.collaborator.server.DisconnectHandler</servlet-class>
   </servlet>
@@ -43,6 +43,16 @@
   <servlet-mapping>
     <servlet-name>disconnectServlet</servlet-name>
     <url-pattern>/_ah/channel/disconnected/</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>connectServlet</servlet-name>
+    <servlet-class>edu.caltech.cs141b.collaborator.server.ConnectHandler</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>connectServlet</servlet-name>
+    <url-pattern>/_ah/channel/connected/</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->

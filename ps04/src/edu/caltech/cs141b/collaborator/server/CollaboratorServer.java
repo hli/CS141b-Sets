@@ -68,10 +68,12 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         return clientIds;
     }
     
+    public static void addClientId(String clientId) {
+        clientIds.add(clientId);
+    }
+    
     public String createChannel(String clientId) {
     	String token = channelService.createChannel(clientId);
-    	clientIds.add(clientId);
-    	
     	return token;
     }
     
