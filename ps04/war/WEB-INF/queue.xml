@@ -4,4 +4,9 @@
     <name>default</name>
     <rate>1/s</rate>
   </queue>
+  <queue>
+    <name>checkout</name>
+    <rate>1/s</rate>
+    <max-concurrent-requests>1</max-concurrent-requests>
+  </queue>
 </queue-entries>

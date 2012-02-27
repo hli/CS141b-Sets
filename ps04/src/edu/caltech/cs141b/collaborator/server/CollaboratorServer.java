@@ -18,6 +18,7 @@ import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.Queue;
 
 import static com.google.appengine.api.taskqueue.TaskOptions.Builder.*;
+
 import com.google.gson.Gson;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -39,10 +40,11 @@ import edu.caltech.cs141b.collaborator.server.data.DocumentRevisionData;
 public class CollaboratorServer extends RemoteServiceServlet implements
     CollaboratorService {
         
-    private static final long DELTA = 60000;
+    public static final long DELTA = 60000;
     
     private static ChannelService channelService = ChannelServiceFactory.getChannelService();
-    private static Queue taskqueue = QueueFactory.getDefaultQueue();
+    private static Queue taskQueue = QueueFactory.getDefaultQueue();
+    private static Queue checkoutQueue = QueueFactory.getQueue("checkout");
     
     private static Gson gson = new Gson();
     
@@ -67,6 +69,14 @@ public class CollaboratorServer extends RemoteServiceServlet implements
     
     public static List<String> getClientIds() {
         return clientIds;
+    }
+    
+    public static Queue getTaskQueue() {
+        return taskQueue;
+    }
+    
+    public static Queue getCheckoutQueue() {
+        return checkoutQueue;
     }
     
     public static void addClientId(String clientId) {
@@ -144,53 +154,9 @@ public class CollaboratorServer extends RemoteServiceServlet implements
      * @throws LockUnavailable
      *    if another client has the lock
      */
-    public Document checkoutDocument(String key, String clientId) throws LockUnavailable {
-        PersistenceManager pm = PMF.get().getPersistenceManager();
-        Transaction tx = pm.currentTransaction();
-        Document doc = null;
-        Date currentTime = new Date();
-
-        try {
-        	tx.begin();
-
-        	DocumentData result = pm.getObjectById(DocumentData.class,
-        			KeyFactory.stringToKey(key));
-        	
-        	if (!result.queueContains(clientId)) {
-        	    result.addToQueue(clientId);
-        	    pm.makePersistent(result);
-        	}
-        	String head = result.peekAtQueue();
-
-        	if (result.getLockedUntil() == null ||
-        			result.getLockedUntil().before(currentTime) ||
-        			// If the top of the queue for the document is the user, give the user the document.
-        			head.equals(clientId)) {
-        		doc = new Document(result.getKey(), result.getTitle(),
-        				result.getContents(), true);
-        		if (result.getSimulate()) {
-        		    doc.setSimulate();
-        		}
-        		result.lock(clientId, 
-        		        new Date(currentTime.getTime() + DELTA));
-        		pm.makePersistent(result);
-        		
-        		taskqueue.add(withUrl("/Collaborator/tasks").
-                        param("docKey", result.getKey()).param("clientId", clientId).method(Method.POST).countdownMillis(DELTA));
-        	} else {
-        	    Message msgobj = new Message(Message.MessageType.UNAVAILABLE, result.getKey(), result.indexInQueue(clientId));
-                String msgstr = gson.toJson(msgobj);
-                channelService.sendMessage(
-        		        new ChannelMessage(clientId, msgstr));
-        	}      
-        	tx.commit();
-        } finally {
-            if (tx.isActive()) {
-                tx.rollback();
-            }
-        }
-        
-        return doc;
+    public void checkoutDocument(String key, String clientId) {
+        checkoutQueue.add(withUrl("/Collaborator/checkout").
+                param("docKey", key).param("clientId", clientId).method(Method.POST).countdownMillis(0));
     }
     private static final Logger log = Logger.getLogger(CollaboratorServer.class.getName());
     /**
@@ -243,7 +209,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         Document returnDoc = new Document(result.getKey(), result.getTitle(), 
                 result.getContents(), true);
         if (result.getSimulate()) {
-            returnDoc.setSimulate();
+            returnDoc.setSimulate(true);
         }
         return returnDoc;
     }
@@ -295,7 +261,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         Document returnDoc = new Document(result.getKey(), result.getTitle(), 
                 result.getContents(), false);
         if (result.getSimulate()) {
-            returnDoc.setSimulate();
+            returnDoc.setSimulate(true);
         }
         return returnDoc;
     }
@@ -325,7 +291,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
             pm.makePersistent(result);
             tx.commit();
             
-            taskqueue.add(withUrl("/Collaborator/tasks").
+            taskQueue.add(withUrl("/Collaborator/tasks").
                     param("docKey", result.getKey()).param("clientId", clientId).method(Method.POST).countdownMillis(DELTA));
         } finally {
             if (tx.isActive()) {

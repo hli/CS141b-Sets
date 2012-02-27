@@ -13,7 +13,7 @@ public interface CollaboratorServiceAsync {
 
     void getDocument(String key, String clientId, AsyncCallback<Document> callback);
     
-    void checkoutDocument(String key, String clientId, AsyncCallback<Document> callback);
+    void checkoutDocument(String key, String clientId, AsyncCallback<Void> callback);
 
     void commitDocument(Document doc, String clientId, AsyncCallback<Document> callback);
     

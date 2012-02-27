@@ -7,12 +7,15 @@ import com.kfuntak.gwt.json.serialization.client.Serializer;
 public class Message implements JsonSerializable {
     
     public enum MessageType {
-        AVAILABLE, UNAVAILABLE, EXPIRED
+        AVAILABLE, UNAVAILABLE, CHECKEDOUT, EXPIRED
     }
 
     private MessageType type = null;
     private String docKey = null;
     private int position = -1;
+    private String docContents = null;
+    private String docTitle = null;
+    private Boolean simulate = null;
     
     public MessageType getType() {
         return this.type;
@@ -32,6 +35,24 @@ public class Message implements JsonSerializable {
     public void setPosition(int pos) {
         this.position = pos;
     }
+    public String getDocContents() {
+        return this.docContents;
+    }
+    public void setDocContents(String docContents) {
+        this.docContents= docContents;
+    }
+    public String getDocTitle() {
+        return this.docTitle;
+    }
+    public void setDocTitle(String docTitle) {
+        this.docTitle = docTitle;
+    }
+    public Boolean isSimulate() {
+        return this.simulate;
+    }
+    public void setSimulate(Boolean sim) {
+        this.simulate = sim;
+    }
     
     /**
      * A constructor with no parameters is required
@@ -48,6 +69,18 @@ public class Message implements JsonSerializable {
         this.type = mType;
         this.docKey = dKey;
         this.position = pos;
+    }
+    
+    /**
+     * A constructor with three parameters, used only for sending CHECKEDOUT messages.
+     */
+    public Message(String dKey, String docTitle, String docContents, Boolean simulate) {
+        super();
+        this.type = Message.MessageType.CHECKEDOUT;
+        this.docKey = dKey;
+        this.docTitle = docTitle;
+        this.docContents = docContents;
+        this.simulate = simulate;
     }
     
     /**

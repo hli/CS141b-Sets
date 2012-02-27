@@ -14,7 +14,7 @@ import edu.caltech.cs141b.collaborator.common.Document;
 /**
  * Used in conjunction with <code>CollaboratorService.checkoutDocument(String key)</code>.
  */
-public class DocCheckouter implements AsyncCallback<Document> {
+public class DocCheckouter implements AsyncCallback<Void> {
 
     private Editor editor;
 
@@ -46,29 +46,6 @@ public class DocCheckouter implements AsyncCallback<Document> {
     }
 
     @Override
-    public void onSuccess(Document result) {
-        if (result != null) {
-            if (this.editor != null)
-                this.editor.refresh(result);
-            new Notification("Document \"" + result.getTitle() + "\" checked out.").show();
-            //If it's in the simulation, here is where we eat.
-            if (result.getSimulate()) {
-                final Document doc = result;
-                final Editor editor = this.editor;
-                Random randomGenerator = new Random();
-                Timer t = new Timer() {;
-                    public void run() {
-                        doc.setContents(doc.getContents() + "\n" + Main.clientId);
-                        if (editor != null) {
-                            new DocCommitter(editor).commitDocument(doc, Main.clientId);
-                        }
-                        else {
-                            new DocCommitter().commitDocument(doc, Main.clientId);
-                        }
-                    }
-                };
-                t.schedule(randomGenerator.nextInt(Main.mealTime));
-            }
-        }
+    public void onSuccess(Void _) {
     }
 }

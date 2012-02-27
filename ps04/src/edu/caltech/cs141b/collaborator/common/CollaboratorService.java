@@ -39,7 +39,7 @@ public interface CollaboratorService extends RemoteService {
      * @throws LockUnavailable
      *   If a lock cannot be obtained
      */
-    Document checkoutDocument(String key, String clientId) throws LockUnavailable;
+    void checkoutDocument(String key, String clientId) throws LockUnavailable;
 
     /**
      * Save the locked document.

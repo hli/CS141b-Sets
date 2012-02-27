@@ -53,7 +53,7 @@ public class DocCommitter implements AsyncCallback<Document> {
     	GWT.log("Document " + result + " saved.");
         
     	//If it's in the simulation, we are still eating.
-        if (result.getSimulate()) {
+        if (result.isSimulate()) {
             if (this.editor != null) {
                 new DocCheckinner(this.editor).checkinDocument(result, Main.clientId);
             } else {

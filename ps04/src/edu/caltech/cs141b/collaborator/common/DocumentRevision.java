@@ -24,8 +24,13 @@ public class DocumentRevision extends Document implements IsSerializable {
     public Date getUpdatedTime() {
         return this.updatedTime;
     }
-
+    public void setUpdatedTime(Date updatedTime) {
+        this.updatedTime = updatedTime;
+    }
     public String getUpdatedBy() {
         return this.updatedBy;
+    }
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 }

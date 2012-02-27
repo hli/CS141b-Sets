@@ -51,7 +51,7 @@ public class DocCheckinner implements AsyncCallback<Document> {
         }
         new Notification("Document \"" + result.getTitle() + "\" checked in.").show();
         // If it's in the simulation, here is where we think and then get hungry.
-        if (result.getSimulate()) {
+        if (result.isSimulate()) {
             final Document doc = result;
             final Editor editor = this.editor;
             Random randomGenerator = new Random();
