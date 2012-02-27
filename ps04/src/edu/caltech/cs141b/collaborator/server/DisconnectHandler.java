@@ -54,9 +54,11 @@ public class DisconnectHandler extends HttpServlet {
                         tx.begin();
                         if (!d.queueIsEmpty() && d.peekAtQueue().equals(clientId)) {
                             d.popFromQueue();
-                            Message msgobj = new Message(Message.MessageType.AVAILABLE, d.getKey(), -1);
-                            channelService.sendMessage(
-                                    new ChannelMessage(d.peekAtQueue(), gson.toJson(msgobj)));
+                            if (!d.queueIsEmpty()) {
+                                Message msgobj = new Message(Message.MessageType.AVAILABLE, d.getKey(), -1);
+                                channelService.sendMessage(
+                                        new ChannelMessage(d.peekAtQueue(), gson.toJson(msgobj)));
+                            }
                         }
                         else {
                             d.removeFromQueue(clientId);
