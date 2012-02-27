@@ -69,10 +69,8 @@ public class CheckoutHandler extends HttpServlet {
             }
             String head = result.peekAtQueue();
 
-            if (result.getLockedUntil() == null ||
-                    result.getLockedUntil().before(currentTime) ||
-                    // If the top of the queue for the document is the user, give the user the document.
-                    head.equals(clientId)) {
+            // If the top of the queue for the document is the user, give the user the document.
+            if (head.equals(clientId)) {
                 result.lock(clientId, 
                         new Date(currentTime.getTime() + CollaboratorServer.DELTA));
                 pm.makePersistent(result);

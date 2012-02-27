@@ -158,7 +158,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
         checkoutQueue.add(withUrl("/Collaborator/checkout").
                 param("docKey", key).param("clientId", clientId).method(Method.POST).countdownMillis(0));
     }
-    private static final Logger log = Logger.getLogger(CollaboratorServer.class.getName());
+
     /**
      * Stores document changes.
      * 
@@ -180,8 +180,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
                
             result = pm.getObjectById(DocumentData.class,
             		KeyFactory.stringToKey(doc.getKey()));
-            log.info("LockedBy12: " + result.getLockedBy());
-            log.info("LockedUnitl12: " + result.getLockedUntil());
+
             if (result.getLockedUntil().after(currentTime) &&
             		result.getLockedBy().equals(clientId)) {
 
