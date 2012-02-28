@@ -268,7 +268,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
             tx.commit();
             
             taskQueue.add(withUrl("/Collaborator/tasks").
-                    param("docKey", result.getKey()).param("clientId", clientId).method(Method.POST).countdownMillis(DELTA));
+                    param("docKey", result.getKey()).param("clientId", clientId).param("Type", "Expired").method(Method.POST).countdownMillis(DELTA));
         } finally {
             if (tx.isActive()) {
                 tx.rollback();
