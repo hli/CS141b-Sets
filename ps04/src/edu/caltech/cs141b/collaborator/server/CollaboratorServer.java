@@ -47,40 +47,17 @@ public class CollaboratorServer extends RemoteServiceServlet implements
     private static Queue checkoutQueue = QueueFactory.getQueue("checkout");
     
     private static Gson gson = new Gson();
-    
-    private static List<String> clientIds = new ArrayList<String>();
-    
+        
     /**
-     * Get User ID.
+     * Get client's email address.
      * 
-     * Gets a unique identifier for the current user.
+     * Gets the email address of the client using this thread.
      * 
      * @return
-     *   Current user identifier.
+     *   Current client's email address.
      */
-    
     private String getClientSignature() {
         return this.getThreadLocalRequest().getUserPrincipal().getName(); 
-    }
-    
-    public static ChannelService getChannelService() {
-        return channelService;
-    }
-    
-    public static List<String> getClientIds() {
-        return clientIds;
-    }
-    
-    public static Queue getTaskQueue() {
-        return taskQueue;
-    }
-    
-    public static Queue getCheckoutQueue() {
-        return checkoutQueue;
-    }
-    
-    public static void addClientId(String clientId) {
-        clientIds.add(clientId);
     }
     
     public String createChannel(String clientId) {

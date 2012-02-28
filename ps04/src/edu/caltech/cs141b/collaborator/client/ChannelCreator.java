@@ -44,7 +44,6 @@ public class ChannelCreator implements AsyncCallback<String>{
                 channel.open(new SocketListener() {
                     @Override
                     public void onOpen() {
-                        Window.alert("Channel opened!");
                     }
                     @Override
                     public void onMessage(String msgstr) {
@@ -101,7 +100,7 @@ public class ChannelCreator implements AsyncCallback<String>{
                     }
                     @Override
                     public void onClose() {
-                        Window.alert("Channel closed!");
+                        new ChannelCreator().createChannel(Main.clientId);
                     }
                 });
       	      }

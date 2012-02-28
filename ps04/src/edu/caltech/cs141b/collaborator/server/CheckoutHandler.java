@@ -3,8 +3,6 @@ package edu.caltech.cs141b.collaborator.server;
 import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
 
 import java.util.Date;
-import java.util.List;
-import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
@@ -14,23 +12,23 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
+import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions.Method;
 import com.google.gson.Gson;
 
-import edu.caltech.cs141b.collaborator.common.Document;
 import edu.caltech.cs141b.collaborator.common.LockUnavailable;
 import edu.caltech.cs141b.collaborator.common.Message;
 import edu.caltech.cs141b.collaborator.common.PMF;
-import edu.caltech.cs141b.collaborator.server.CollaboratorServer;
 import edu.caltech.cs141b.collaborator.server.data.DocumentData;
 
 @SuppressWarnings("serial")
 public class CheckoutHandler extends HttpServlet {
     
-    private static final Logger log = Logger.getLogger(TaskHandler.class.getName());
-
+    public static final long DELTA = 60000;
+    
     public void doPost(HttpServletRequest req, HttpServletResponse resp) {
         String docKey = req.getParameter("docKey");
         String clientId = req.getParameter("clientId");
@@ -50,11 +48,10 @@ public class CheckoutHandler extends HttpServlet {
      */
     public void checkoutDocument(String key, String clientId) {
         Gson gson = new Gson();
-        ChannelService channelService = CollaboratorServer.getChannelService();
-        Queue taskqueue = CollaboratorServer.getTaskQueue();
+        ChannelService channelService = ChannelServiceFactory.getChannelService();
+        Queue taskQueue = QueueFactory.getDefaultQueue();
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
-        Document doc = null;
         Date currentTime = new Date();
 
         try {
@@ -72,11 +69,11 @@ public class CheckoutHandler extends HttpServlet {
             // If the top of the queue for the document is the user, give the user the document.
             if (head.equals(clientId)) {
                 result.lock(clientId, 
-                        new Date(currentTime.getTime() + CollaboratorServer.DELTA));
+                        new Date(currentTime.getTime() + DELTA));
                 pm.makePersistent(result);
                 
-                taskqueue.add(withUrl("/Collaborator/tasks").
-                        param("docKey", result.getKey()).param("clientId", clientId).method(Method.POST).countdownMillis(CollaboratorServer.DELTA));
+                taskQueue.add(withUrl("/Collaborator/tasks").
+                         param("docKey", result.getKey()).param("clientId", clientId).param("Type", "Expire").method(Method.POST).countdownMillis(DELTA));
                 Message msgobj = new Message(result.getKey(), result.getTitle(), result.getContents(), result.getSimulate());
                 String msgstr = gson.toJson(msgobj);
                 channelService.sendMessage(

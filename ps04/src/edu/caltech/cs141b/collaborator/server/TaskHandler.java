@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.jdo.Transaction;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,21 +13,58 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
+import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gson.Gson;
 
 import edu.caltech.cs141b.collaborator.common.Message;
 import edu.caltech.cs141b.collaborator.common.PMF;
-import edu.caltech.cs141b.collaborator.server.CollaboratorServer;
+import edu.caltech.cs141b.collaborator.server.data.ClientIds;
 import edu.caltech.cs141b.collaborator.server.data.DocumentData;
 
 @SuppressWarnings("serial")
 public class TaskHandler extends HttpServlet {
     
+    Logger log = Logger.getLogger(TaskHandler.class.getName());
+        
     public void doPost(HttpServletRequest req, HttpServletResponse resp) {
-        String docKey = req.getParameter("docKey");
+        String type = req.getParameter("Type");
+        log.info(type);
         String clientId = req.getParameter("clientId");
-        this.handleExpire(docKey, clientId);
+        if (type.equals("Connect")) {
+            this.handleConnection(clientId);
+        }
+        else if (type.equals("Expire")) {
+            String docKey = req.getParameter("docKey");
+            this.handleExpire(docKey, clientId);
+        }
+        else {
+            this.handleDisconnection(clientId);
+        }
+    }
+    
+    public void handleConnection(String clientId) {
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        Transaction tx = pm.currentTransaction();
+        try {
+            tx.begin();
+            ClientIds clientIds;
+            Query clientIdsQuery = pm.newQuery(ClientIds.class);
+            try {
+                List<ClientIds> result = (List<ClientIds>) clientIdsQuery.execute();
+                if (result.isEmpty()) { clientIds = new ClientIds(); }
+                else { clientIds = result.get(0); }
+                clientIds.addClient(clientId);
+                pm.makePersistent(clientIds);
+                tx.commit();
+            } finally {
+                clientIdsQuery.closeAll();
+            }
+        } finally {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+        }
     }
     
     public void handleExpire(String key, String clientId) {
@@ -34,14 +72,23 @@ public class TaskHandler extends HttpServlet {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         DocumentData result = null;
-        ChannelService channelService = CollaboratorServer.getChannelService();
-        List<String> clientIds = CollaboratorServer.getClientIds();
+        ChannelService channelService = ChannelServiceFactory.getChannelService();
         Date currentTime = new Date();
+        ClientIds clientIds;
+        
+        Query clientIdsQuery = pm.newQuery(ClientIds.class);
+        
+        try {
+            List<ClientIds> clientIdsList = (List<ClientIds>) clientIdsQuery.execute();
+
+            clientIds = clientIdsList.get(0);         
+        } finally {
+            clientIdsQuery.closeAll();
+        }
         
         if (clientIds.contains(clientId)) {
             try {
                 tx.begin();
-                
                 result = pm.getObjectById(DocumentData.class,
                         KeyFactory.stringToKey(key));
                 if (result.getLockedUntil() != null 
@@ -69,6 +116,67 @@ public class TaskHandler extends HttpServlet {
                     tx.rollback();
                 }
             }
+        }
+    }
+    
+    public void handleDisconnection(String clientId) {
+        Gson gson = new Gson();
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        Transaction tx = pm.currentTransaction();
+        ChannelService channelService = ChannelServiceFactory.getChannelService();
+        
+        Query clientIdsQuery = pm.newQuery(ClientIds.class);
+        
+        try {
+            List<ClientIds> clientIdsList = (List<ClientIds>) clientIdsQuery.execute();
+        
+            ClientIds clientIds = clientIdsList.get(0);
+            try {
+                tx.begin();
+                clientIds.removeClient(clientId);
+                pm.makePersistent(clientIds);
+                tx.commit();
+            } finally {
+                if (tx.isActive()) {
+                    tx.rollback();
+                }
+            }
+            
+        } finally {
+            clientIdsQuery.closeAll();
+        }
+        
+        tx = pm.currentTransaction();
+        Query docQuery = pm.newQuery(DocumentData.class);
+
+        try {
+            List<DocumentData> results = (List<DocumentData>) docQuery.execute();
+            if (!results.isEmpty()) {
+                try {
+                    for (DocumentData d : results) {
+                        tx.begin();
+                        if (!d.queueIsEmpty() && d.peekAtQueue().equals(clientId)) {
+                            d.popFromQueue();
+                            if (!d.queueIsEmpty()) {
+                                Message msgobj = new Message(Message.MessageType.AVAILABLE, d.getKey(), -1);
+                                channelService.sendMessage(
+                                        new ChannelMessage(d.peekAtQueue(), gson.toJson(msgobj)));
+                            }
+                        }
+                        else {
+                            d.removeFromQueue(clientId);
+                        }
+                        pm.makePersistent(d);
+                        tx.commit();
+                    }
+                } finally {
+                    if (tx.isActive()) {
+                        tx.rollback();
+                    }
+                }
+            }
+        } finally {
+            docQuery.closeAll();
         }
     }
 }
