@@ -1,6 +1,6 @@
 package cs141b;
 
-option java_package = "edu.caltech.cs141b.hw5.data";
+option java_package = "edu.caltech.cs141b.hw5.android.data";
 option java_outer_classname = "CollabMessages";
 option optimize_for = LITE_RUNTIME;
 

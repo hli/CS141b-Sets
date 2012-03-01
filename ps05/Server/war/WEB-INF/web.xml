@@ -18,7 +18,7 @@
     
   <servlet>
     <servlet-name>collaboratorMessageServlet</servlet-name>
-    <servlet-class>edu.caltech.cs141b.hw5.gwt.collab.server.CollaboratorMessageServlet</servlet-class>
+    <servlet-class>edu.caltech.cs141b.hw5.server.CollaboratorMessageServlet</servlet-class>
   </servlet>
   
  <servlet-mapping>

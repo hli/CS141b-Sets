@@ -43,7 +43,7 @@ public class CollaboratorServiceWrapper {
 				.setRequestType(RequestType.GET_DOCUMENT_LIST)
 				.build();
 		
-		ResponseMessage response = conn.makePostConnct(request);
+		ResponseMessage response = conn.makePostConnect(request);
 		
 		List<DocumentMetadata> docs = new ArrayList<DocumentMetadata>();
 		if (response.getStatusType() == StatusType.SUCCESS) {
@@ -68,7 +68,7 @@ public class CollaboratorServiceWrapper {
 				.setDocumentKey(key)
 				.build();
 		
-		ResponseMessage response = conn.makePostConnct(request);
+		ResponseMessage response = conn.makePostConnect(request);
 		
 		switch (response.getStatusType()) {
 			case SUCCESS:
@@ -92,7 +92,7 @@ public class CollaboratorServiceWrapper {
 				.setDocumentKey(key)
 				.build();
 		
-		ResponseMessage response = conn.makePostConnct(request);
+		ResponseMessage response = conn.makePostConnect(request);
 		
 		switch (response.getStatusType()) {
 			case SUCCESS:
@@ -116,7 +116,7 @@ public class CollaboratorServiceWrapper {
 				.setLockedDoc(DataConverter.buildLockedDocumentInfo(doc))
 				.build();
 		
-		ResponseMessage response = conn.makePostConnct(request);
+		ResponseMessage response = conn.makePostConnect(request);
 		
 		switch (response.getStatusType()) {
 			case SUCCESS:
@@ -140,7 +140,7 @@ public class CollaboratorServiceWrapper {
 				.setLockedDoc(DataConverter.buildLockedDocumentInfo(doc))
 				.build();
 		
-		ResponseMessage response = conn.makePostConnct(request);
+		ResponseMessage response = conn.makePostConnect(request);
 		
 		switch (response.getStatusType()) {
 			case SUCCESS:

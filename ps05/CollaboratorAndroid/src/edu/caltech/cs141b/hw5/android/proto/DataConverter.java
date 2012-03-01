@@ -1,14 +1,16 @@
-package edu.caltech.cs141b.hw5.gwt.collab.shared;
+package edu.caltech.cs141b.hw5.android.proto;
 
 import java.util.Date;
 
-import edu.caltech.cs141b.hw5.data.CollabMessages.DocumentMetaInfo;
-import edu.caltech.cs141b.hw5.data.CollabMessages.LockedDocumentInfo;
-import edu.caltech.cs141b.hw5.data.CollabMessages.UnlockedDocumentInfo;
+import edu.caltech.cs141b.hw5.android.data.CollabMessages.DocumentMetaInfo;
+import edu.caltech.cs141b.hw5.android.data.CollabMessages.LockedDocumentInfo;
+import edu.caltech.cs141b.hw5.android.data.CollabMessages.UnlockedDocumentInfo;
+import edu.caltech.cs141b.hw5.android.data.DocumentMetadata;
+import edu.caltech.cs141b.hw5.android.data.LockedDocument;
+import edu.caltech.cs141b.hw5.android.data.UnlockedDocument;
 
 /**
  * Helper class for converting between protocol buffer and native data type.
- * 
  * 
  * @author aliu
  *
@@ -39,7 +41,8 @@ public class DataConverter {
 	 * @return protoc data type
 	 */
 	public static LockedDocumentInfo buildLockedDocumentInfo(LockedDocument doc) {
-LockedDocumentInfo.Builder builder = LockedDocumentInfo.newBuilder();
+		
+		LockedDocumentInfo.Builder builder = LockedDocumentInfo.newBuilder();
 		
 		// A locked document that has null key is a new document
 		// and won't have these fields. Set these only when key is
