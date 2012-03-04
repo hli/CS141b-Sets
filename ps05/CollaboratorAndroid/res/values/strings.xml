@@ -2,6 +2,9 @@
 <resources>
 
     <string name="hello">Hello World, CollaboratorAndroidActivity!</string>
-    <string name="app_name">CollaboratorAndroid</string>
-
+    <string name="app_name">Collaborator</string>
+    <string name="refresh">Refresh</string>
+    <string name="lock">Lock Document</string>
+    <string name="save">Save Document</string>
+    
 </resources>
