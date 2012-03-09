@@ -14,6 +14,10 @@ public class DocCheckinner implements AsyncCallback<Document> {
 
 	private Editor editor;
 	
+	public DocCheckinner() {
+	    this.editor = null;
+	}
+	
     public DocCheckinner(Editor editor) {
         this.editor = editor;
     }
@@ -39,7 +43,9 @@ public class DocCheckinner implements AsyncCallback<Document> {
 
     @Override
     public void onSuccess(Document result) {
-        this.editor.refresh(result);
+        if (this.editor != null) {
+            this.editor.refresh(result);
+        }
         new Notification("Document \"" + result.getTitle() + "\" checked in.").show();
     }
 }
