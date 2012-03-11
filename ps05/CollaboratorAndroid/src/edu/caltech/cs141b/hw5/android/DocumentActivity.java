@@ -98,7 +98,6 @@ public class DocumentActivity extends Activity {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
         } else {
             Toast.makeText(getApplicationContext(), "You can only refresh when the document is unlocked.", Toast.LENGTH_SHORT).show();
         }
