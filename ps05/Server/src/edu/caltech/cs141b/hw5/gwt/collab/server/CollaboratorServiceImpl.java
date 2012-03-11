@@ -2,8 +2,6 @@ package edu.caltech.cs141b.hw5.gwt.collab.server;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
 import javax.jdo.PersistenceManager;
 
 import edu.caltech.cs141b.collaborator.common.Document;
@@ -28,7 +26,6 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class CollaboratorServiceImpl extends RemoteServiceServlet implements
 		CollaboratorService {
 	
-	private static final Logger log = Logger.getLogger(CollaboratorServiceImpl.class.toString());
 	private static CollaboratorServer server = new CollaboratorServer();
 
 	/* (non-Javadoc)

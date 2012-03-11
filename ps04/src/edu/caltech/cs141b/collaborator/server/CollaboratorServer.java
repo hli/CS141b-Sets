@@ -3,8 +3,6 @@ package edu.caltech.cs141b.collaborator.server;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
-
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;

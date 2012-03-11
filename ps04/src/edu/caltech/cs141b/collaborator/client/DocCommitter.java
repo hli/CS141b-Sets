@@ -1,9 +1,6 @@
 package edu.caltech.cs141b.collaborator.client;
 
-import java.util.Random;
-
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import edu.caltech.cs141b.collaborator.ui.Notification;

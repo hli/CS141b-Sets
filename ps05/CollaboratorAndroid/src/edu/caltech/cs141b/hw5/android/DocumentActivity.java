@@ -1,32 +1,12 @@
 package edu.caltech.cs141b.hw5.android;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import android.app.Activity;
-import android.app.ListActivity;
-import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
-import edu.caltech.cs141b.hw5.android.data.DocumentMetadata;
 import edu.caltech.cs141b.hw5.android.data.InvalidRequest;
 import edu.caltech.cs141b.hw5.android.data.LockExpired;
 import edu.caltech.cs141b.hw5.android.data.LockUnavailable;
@@ -41,7 +21,7 @@ public class DocumentActivity extends Activity {
 	
 	private String docKey;
 	private LockedDocument lockedDoc;
-	private Boolean isLocked = false;
+	private Boolean isLocked = true;
     private EditText title;
 	private EditText contents;
 	
@@ -56,13 +36,15 @@ public class DocumentActivity extends Activity {
         
         // Set the controls
         this.title = (EditText) this.findViewById(R.id.title);
-        this.title.setEnabled(false);
-        
         this.contents = (EditText) this.findViewById(R.id.contents);
-        this.contents.setEnabled(false);
-        
-        // Refresh the document.
-        this.refresh();
+
+        // Refresh the existing document.
+        if (!this.docKey.equals("")) {
+            this.isLocked = false;
+            this.title.setEnabled(false);
+            this.contents.setEnabled(false);
+            this.refresh();
+        }
     }
     
     /** Called when the activity is paused. */
@@ -76,13 +58,12 @@ public class DocumentActivity extends Activity {
                 service.releaseLock(this.lockedDoc);
                 this.isLocked = false;
                 this.lockedDoc = null;
+                this.title.setEnabled(false);
                 this.contents.setEnabled(false);
             } catch (InvalidRequest e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Invalid request.", Toast.LENGTH_SHORT).show();
             } catch (LockExpired e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Lock has expired.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -95,8 +76,7 @@ public class DocumentActivity extends Activity {
                 this.contents.setText(doc.getContents());
                 this.title.setText(doc.getTitle());
             } catch (InvalidRequest e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Invalid request.", Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(getApplicationContext(), "You can only refresh when the document is unlocked.", Toast.LENGTH_SHORT).show();
@@ -112,11 +92,9 @@ public class DocumentActivity extends Activity {
                 this.title.setEnabled(true);
                 this.contents.setEnabled(true);
             } catch (LockUnavailable e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Lock is unavailable.", Toast.LENGTH_SHORT).show();
             } catch (InvalidRequest e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Invalid request.", Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(getApplicationContext(), "You can only lock when the document is unlocked.", Toast.LENGTH_SHORT).show();
@@ -127,17 +105,25 @@ public class DocumentActivity extends Activity {
         // Only save when the document is locked.
         if (this.isLocked) {
             try {
-                //this.lockedDoc.setTitle(this.title.getText().toString());
-                this.lockedDoc.setContents(this.contents.getText().toString());
-                service.saveDocument(this.lockedDoc);
+                // Refresh the existing document.
+                if (!this.docKey.equals("")) {
+                    this.lockedDoc.setTitle(this.title.getText().toString());
+                    this.lockedDoc.setContents(this.contents.getText().toString());
+                    service.saveDocument(this.lockedDoc);
+                }
+                // Create new document.
+                else {
+                    LockedDocument newDoc = new LockedDocument(null, null, null, this.title.getText().toString(), this.contents.getText().toString());
+                    UnlockedDocument result = service.saveDocument(newDoc);
+                    this.docKey = result.getKey();
+                }
                 this.isLocked = false;
+                this.title.setEnabled(false);
                 this.contents.setEnabled(false);
             } catch (LockExpired e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Lock has expired.", Toast.LENGTH_SHORT).show();
             } catch (InvalidRequest e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Invalid request.", Toast.LENGTH_SHORT).show();
             }
             
         } else {
