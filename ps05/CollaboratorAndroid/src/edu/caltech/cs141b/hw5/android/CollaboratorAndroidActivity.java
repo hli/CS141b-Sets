@@ -119,6 +119,13 @@ public class CollaboratorAndroidActivity extends ListActivity {
                 new int[] { R.id.docTitle, R.id.docKey }));
     }
     
+    public void newDoc() {
+        // Create a new document.
+        Intent intent = new Intent(CollaboratorAndroidActivity.this, DocumentActivity.class);
+        intent.putExtra("docKey", "");
+        CollaboratorAndroidActivity.this.startActivity(intent);
+    }
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -130,6 +137,11 @@ public class CollaboratorAndroidActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
+        
+            case R.id.newdoc:
+                this.newDoc();
+                return true;
+                
             case R.id.refresh:
                 this.refresh();
                 return true;

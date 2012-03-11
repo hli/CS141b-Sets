@@ -39,6 +39,7 @@ public class DocumentActivity extends Activity {
 	
 	private String docKey;
 	private Boolean isLocked = false;
+	private EditText title;
 	private EditText contents;
 	
     /** Called when the activity is first created. */
@@ -51,6 +52,9 @@ public class DocumentActivity extends Activity {
         this.setContentView(R.layout.doc);
         
         // Set the controls
+        this.title = (EditText) this.findViewById(R.id.title);
+        this.title.setEnabled(false);
+        
         this.contents = (EditText) this.findViewById(R.id.contents);
         this.contents.setEnabled(false);
         
@@ -77,6 +81,7 @@ public class DocumentActivity extends Activity {
         if (!this.isLocked) {
             /* TODO: Get document contents. */
             this.contents.setText(this.docKey);
+            this.title.setText(this.docKey);
         } else {
             Toast.makeText(getApplicationContext(), "You can only refresh when the document is unlocked.", Toast.LENGTH_SHORT).show();
         }
@@ -88,6 +93,7 @@ public class DocumentActivity extends Activity {
             /** TODO: Try to lock document. */
 
             this.isLocked = true;
+            this.title.setEnabled(true);
             this.contents.setEnabled(true);
         } else {
             Toast.makeText(getApplicationContext(), "You can only lock when the document is unlocked.", Toast.LENGTH_SHORT).show();
