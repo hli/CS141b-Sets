@@ -31,14 +31,18 @@ import edu.caltech.cs141b.hw5.android.data.InvalidRequest;
 import edu.caltech.cs141b.hw5.android.data.LockExpired;
 import edu.caltech.cs141b.hw5.android.data.LockUnavailable;
 import edu.caltech.cs141b.hw5.android.data.LockedDocument;
+import edu.caltech.cs141b.hw5.android.data.UnlockedDocument;
 import edu.caltech.cs141b.hw5.android.proto.CollabServiceWrapper;
 
 public class DocumentActivity extends Activity {
 	
 	private static String TAG = "AndroidActivity";
+	private static CollabServiceWrapper service = new CollabServiceWrapper();
 	
 	private String docKey;
+	private LockedDocument lockedDoc;
 	private Boolean isLocked = false;
+    private EditText title;
 	private EditText contents;
 	
     /** Called when the activity is first created. */
@@ -51,6 +55,9 @@ public class DocumentActivity extends Activity {
         this.setContentView(R.layout.doc);
         
         // Set the controls
+        this.title = (EditText) this.findViewById(R.id.title);
+        this.title.setEnabled(false);
+        
         this.contents = (EditText) this.findViewById(R.id.contents);
         this.contents.setEnabled(false);
         
@@ -65,18 +72,33 @@ public class DocumentActivity extends Activity {
         
         // If document is locked, we unlock.
         if (this.isLocked){
-            /** TODO: Unlock document. */
-            
-            this.isLocked = false;
-            this.contents.setEnabled(false);
+            try {
+                service.releaseLock(this.lockedDoc);
+                this.isLocked = false;
+                this.lockedDoc = null;
+                this.contents.setEnabled(false);
+            } catch (InvalidRequest e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (LockExpired e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
     
-    public void refresh() {
+    public void refresh(){
         // Only refresh when the document is unlocked.
         if (!this.isLocked) {
-            /* TODO: Get document contents. */
-            this.contents.setText(this.docKey);
+            try {
+                UnlockedDocument doc = service.getDocument(this.docKey);
+                this.contents.setText(doc.getContents());
+                this.title.setText(doc.getTitle());
+            } catch (InvalidRequest e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
         } else {
             Toast.makeText(getApplicationContext(), "You can only refresh when the document is unlocked.", Toast.LENGTH_SHORT).show();
         }
@@ -85,10 +107,18 @@ public class DocumentActivity extends Activity {
     public void lock() {
         // Only lock when the document is unlocked.
         if (!this.isLocked) {
-            /** TODO: Try to lock document. */
-
-            this.isLocked = true;
-            this.contents.setEnabled(true);
+            try {
+                this.lockedDoc = service.lockDocument(this.docKey);
+                this.isLocked = true;
+                this.title.setEnabled(true);
+                this.contents.setEnabled(true);
+            } catch (LockUnavailable e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (InvalidRequest e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         } else {
             Toast.makeText(getApplicationContext(), "You can only lock when the document is unlocked.", Toast.LENGTH_SHORT).show();
         }
@@ -97,11 +127,20 @@ public class DocumentActivity extends Activity {
     public void save() {
         // Only save when the document is locked.
         if (this.isLocked) {
-            /** TODO: Try to save document. */
-            // this.contents.getText()
+            try {
+                //this.lockedDoc.setTitle(this.title.getText().toString());
+                this.lockedDoc.setContents(this.contents.getText().toString());
+                service.saveDocument(this.lockedDoc);
+                this.isLocked = false;
+                this.contents.setEnabled(false);
+            } catch (LockExpired e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (InvalidRequest e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             
-            this.isLocked = false;
-            this.contents.setEnabled(false);
         } else {
             Toast.makeText(getApplicationContext(), "You can only save when the document is locked.", Toast.LENGTH_SHORT).show();
         }

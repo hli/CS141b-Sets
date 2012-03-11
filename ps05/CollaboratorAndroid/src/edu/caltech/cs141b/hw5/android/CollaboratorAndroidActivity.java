@@ -36,6 +36,7 @@ import edu.caltech.cs141b.hw5.android.proto.CollabServiceWrapper;
 public class CollaboratorAndroidActivity extends ListActivity {
 	
 	private static String TAG = "AndroidActivity";
+	private static CollabServiceWrapper service = new CollabServiceWrapper();
 	
     /** Called when the activity is first created. */
     @Override
@@ -99,24 +100,28 @@ public class CollaboratorAndroidActivity extends ListActivity {
     }
     
     public void refresh() {       
-        /* TOOD: Get document metadata here. */
-        /* TODO: Convert metadata to the list of hashmap format below. */
-        
         List<Map<String,String>> docs = new ArrayList<Map<String, String>>();
+        List<DocumentMetadata> docList = service.getDocumentList();
         
-        Map<String,String> entry1 = new HashMap<String, String>();
-        entry1.put("docTitle", "Document 1 Title");
-        entry1.put("docKey", "Document 1 Key");
-        docs.add(entry1);
-        
-        Map<String,String> entry2 = new HashMap<String, String>();
-        entry2.put("docTitle", "Document 2 Title");
-        entry2.put("docKey", "Document 2 Key");
-        docs.add(entry2);
+        if (!docList.isEmpty()) {
+            for (DocumentMetadata dm : docList) {
+                Map<String,String> entry = new HashMap<String, String>();
+                entry.put("docTitle", dm.getTitle());
+                entry.put("docKey", dm.getKey());
+                docs.add(entry);
+            }
+        }
         
         this.setListAdapter(new SimpleAdapter(this, docs, R.layout.list_item, 
                 new String[] {"docTitle", "docKey"}, 
                 new int[] { R.id.docTitle, R.id.docKey }));
+    }
+    
+    public void newDoc() {
+        // Create a new document.
+        Intent intent = new Intent(CollaboratorAndroidActivity.this, DocumentActivity.class);
+        intent.putExtra("docKey", "");
+        CollaboratorAndroidActivity.this.startActivity(intent);
     }
     
     @Override
@@ -130,6 +135,11 @@ public class CollaboratorAndroidActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
+        
+            case R.id.newdoc:
+                this.newDoc();
+                return true;
+                
             case R.id.refresh:
                 this.refresh();
                 return true;
