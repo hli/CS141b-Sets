@@ -43,7 +43,6 @@ public class CollaboratorServer extends RemoteServiceServlet implements
     
     private static ChannelService channelService = ChannelServiceFactory.getChannelService();
     private static Queue taskQueue = QueueFactory.getDefaultQueue();
-    private static Queue checkoutQueue = QueueFactory.getQueue("checkout");
     
     private static Gson gson = new Gson();
         
@@ -131,7 +130,7 @@ public class CollaboratorServer extends RemoteServiceServlet implements
      *    if another client has the lock
      */
     public void checkoutDocument(String key, String clientId) {
-        checkoutQueue.add(withUrl("/Collaborator/checkout").
+        taskQueue.add(withUrl("/Collaborator/tasks").param("Type", "Checkout").
                 param("docKey", key).param("clientId", clientId).method(Method.POST).countdownMillis(0));
     }
 
