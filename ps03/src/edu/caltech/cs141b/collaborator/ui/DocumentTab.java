@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PushButton;
 
+import edu.caltech.cs141b.collaborator.client.DocCheckinner;
 import edu.caltech.cs141b.collaborator.client.Main;
 import edu.caltech.cs141b.collaborator.common.Document;
 
@@ -47,6 +48,7 @@ public class DocumentTab extends Composite {
         // Add the close button.
         panel.add(new PushButton("x", new ClickHandler() {
             public void onClick(ClickEvent event) {
+                new DocCheckinner().checkinDocument(new Document(DocumentTab.this.documentKey, null, null, null));
                 Main.chrome.remove(DocumentTab.this.documentKey);
             }
         }));
